@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Tienda de Cartas Magic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg-color: #050816;
+            --bg-card: #0b1020;
+            --bg-card-hover: #151b33;
+            --accent: #08d9d6;
+            --accent-soft: rgba(8, 217, 214, 0.2);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #f97373;
+            --border-radius-lg: 18px;
+            --shadow-soft: 0 20px 40px rgba(15, 23, 42, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #181824 0, #050816 40%, #020617 100%);
+            color: var(--text-main);
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 1.5rem 1.5rem 0.75rem;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin: 0 0 0.2rem;
+            font-size: clamp(1.8rem, 3vw, 2.3rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .badge-row {
+            margin-top: 0.6rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+        }
+
+        .badge-accent {
+            border-color: rgba(8, 217, 214, 0.6);
+            background: var(--accent-soft);
+        }
+
+        .content {
+            flex: 1;
+            padding: 0.5rem 1.5rem 2rem;
+        }
+
+        .content-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1 1 260px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.6rem 0.8rem 0.6rem 2.2rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .toolbar-pill {
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .counter-strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            background: radial-gradient(circle at top left, rgba(8, 217, 214, 0.08), transparent 55%),
+                        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.1), transparent 55%),
+                        var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-soft);
+            padding: 0.65rem 0.65rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(15, 23, 42, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease-out;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-1px);
+            transition: transform 0.12s ease-out, background 0.15s ease-out;
+        }
+
+        .card-image-wrapper {
+            border-radius: 14px;
+            overflow: hidden;
+            aspect-ratio: 3 / 4;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(15, 23, 42, 0.9);
+            background: radial-gradient(circle at top, #020617 0, #020617 30%, #020617 100%);
+            position: relative;
+        }
+
+        .card-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .foil-chip {
+            position: absolute;
+            top: 0.35rem;
+            left: 0.35rem;
+            padding: 0.18rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: linear-gradient(120deg, #22c55e, #a855f7, #0ea5e9);
+            color: #0f172a;
+            font-weight: 700;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.22rem;
+            font-size: 0.8rem;
+        }
+
+        .card-name {
+            font-size: 0.92rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            color: var(--text-muted);
+        }
+
+        .card-tag {
+            padding: 0.12rem 0.45rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            font-size: 0.7rem;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-top: 0.3rem;
+        }
+
+        .price-main {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .price-ref {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .qty-pill {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 1.2rem;
+        }
+
+        .page-btn {
+            border-radius: 999px;
+            padding: 0.25rem 0.55rem;
+            border: 1px solid rgba(148, 163, 184, 0.45);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-main);
+            font-size: 0.8rem;
+            cursor: pointer;
+            min-width: 32px;
+        }
+
+        .page-btn[disabled] {
+            opacity: 0.35;
+            cursor: default;
+        }
+
+        .page-btn.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .page-info {
+            text-align: center;
+            margin-top: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .empty-state {
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .empty-state strong {
+            color: var(--accent);
+        }
+
+        footer {
+            padding: 0.75rem 1.5rem 1.2rem;
+            border-top: 1px solid rgba(15, 23, 42, 0.9);
+            background: radial-gradient(circle at bottom, #020617 0, #020617 45%, #000 100%);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem 0.75rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-inner a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        @media (max-width: 640px) {
+            header {
+                padding: 1.2rem 1rem 0.5rem;
+            }
+            .content {
+                padding: 0.25rem 1rem 1.5rem;
+            }
+            footer {
+                padding: 0.6rem 1rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <div class="header-inner">
+            <h1>El Castillo Magic</h1>
+            <p class="subtitle">Catálogo de cartas — Modern, Commander y más.</p>
+            <div class="badge-row">
+                <span class="badge badge-accent">Inventario dinámico desde fotos</span>
+                <span class="badge">Filtrado instantáneo</span>
+                <span class="badge">Soporte para cartas foil ✨</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="content">
+        <div class="content-inner">
+            <section class="toolbar">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="Buscar por nombre, edición, formato, idioma..."
+                        autocomplete="off"
+                    />
+                </div>
+                <div class="toolbar-right">
+                    <div class="toolbar-pill">
+                        Cartas visibles:
+                        <span id="visibleCount" class="counter-strong">0</span>
+                    </div>
+                    <div class="toolbar-pill">
+                        Total catálogo:
+                        <span id="totalCount" class="counter-strong">0</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cardsSection">
+                <div id="cardsContainer" class="cards-grid"></div>
+                <div id="emptyState" class="empty-state" style="display:none;">
+                    No encontramos cartas para tu búsqueda.
+                    <br />
+                    Prueba con otro nombre, edición o <strong>limpia el filtro</strong>.
+                </div>
+                <div id="pagination" class="pagination"></div>
+                <div id="pageInfo" class="page-info"></div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <span>Generado automáticamente desde inventario_cartas.csv.</span>
+            <span>El Castillo Magic &copy; 2025</span>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const IMAGE_BASE_PATH = "images";
+    const PAGE_SIZE = 60;
+    const cardsData = [{"name": "Aeronaut's Wings", "set": "bro", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.08", "imageFile": "Aeronaut's Wings - BRO - en - NM - 1.jpg"}, {"name": "Aerovela néurok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Aerovela néurok - MRD - es - NM - 1 (2).jpg"}, {"name": "Aerovela néurok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Aerovela néurok - MRD - es - NM - 1 (3).jpg"}, {"name": "Aerovela néurok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Aerovela néurok - MRD - es - NM - 1 (4).jpg"}, {"name": "Aerovela néurok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Aerovela néurok - MRD - es - NM - 1.jpg"}, {"name": "Aether Spellbomb", "set": "jmp", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.19", "imageFile": "Aether Spellbomb - JMP - en - NM - 1.jpg"}, {"name": "Alas de aeronauta", "set": "bro", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Alas de aeronauta - BRO - es - NM - 1.jpg"}, {"name": "Alpha Myr", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.18", "imageFile": "Alpha Myr - MRD - en - NM - 1.jpg"}, {"name": "Arco largo viridiano", "set": "afc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Arco largo viridiano - AFC - es - NM - 1 (2).jpg"}, {"name": "Arco largo viridiano", "set": "afc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Arco largo viridiano - AFC - es - NM - 1 (3).jpg"}, {"name": "Arco largo viridiano", "set": "afc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Arco largo viridiano - AFC - es - NM - 1 (4).jpg"}, {"name": "Arco largo viridiano", "set": "afc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Arco largo viridiano - AFC - es - NM - 1 (5).jpg"}, {"name": "Arco largo viridiano", "set": "afc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Arco largo viridiano - AFC - es - NM - 1 (6).jpg"}, {"name": "Arco largo viridiano", "set": "afc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Arco largo viridiano - AFC - es - NM - 1 (7).jpg"}, {"name": "Arco largo viridiano", "set": "afc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Arco largo viridiano - AFC - es - NM - 1.jpg"}, {"name": "Armadura de sierpescoria", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Armadura de sierpescoria - MRD - es - NM - 1 (2).jpg"}, {"name": "Armadura de sierpescoria", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Armadura de sierpescoria - MRD - es - NM - 1 (3).jpg"}, {"name": "Armadura de sierpescoria", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Armadura de sierpescoria - MRD - es - NM - 1 (4).jpg"}, {"name": "Armadura de sierpescoria", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Armadura de sierpescoria - MRD - es - NM - 1 (5).jpg"}, {"name": "Armadura de sierpescoria", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Armadura de sierpescoria - MRD - es - NM - 1.jpg"}, {"name": "Barrow", "set": "blade", "lang": "ltr", "condition": "EN", "isFoil": false, "format": "", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Barrow-Blade - LTR - en - NM - 1.jpg"}, {"name": "Bomat Courier", "set": "kld", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.12", "imageFile": "Bomat Courier - KLD - en - NM - 1 (2).jpg"}, {"name": "Bomat Courier", "set": "kld", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.12", "imageFile": "Bomat Courier - KLD - en - NM - 1.jpg"}, {"name": "Bomat Courier", "set": "kld", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "938", "priceUsdRef": "1.25", "imageFile": "Bomat Courier - KLD - en - NM_FOIL - 1 (2).jpg"}, {"name": "Bomat Courier", "set": "kld", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "938", "priceUsdRef": "1.25", "imageFile": "Bomat Courier - KLD - en - NM_FOIL - 1.jpg"}, {"name": "Bomba trinquete", "set": "m14", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bomba trinquete - M14 - es - NM - 1.jpg"}, {"name": "Bombahechizo chispa de vida", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo chispa de vida - MRD - es - NM - 1 (2).jpg"}, {"name": "Bombahechizo chispa de vida", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo chispa de vida - MRD - es - NM - 1.jpg"}, {"name": "Bombahechizo de pirita", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de pirita - MRD - es - NM - 1 (2).jpg"}, {"name": "Bombahechizo de pirita", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de pirita - MRD - es - NM - 1 (3).jpg"}, {"name": "Bombahechizo de pirita", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de pirita - MRD - es - NM - 1 (4).jpg"}, {"name": "Bombahechizo de pirita", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de pirita - MRD - es - NM - 1 (5).jpg"}, {"name": "Bombahechizo de pirita", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de pirita - MRD - es - NM - 1 (6).jpg"}, {"name": "Bombahechizo de pirita", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de pirita - MRD - es - NM - 1 (7).jpg"}, {"name": "Bombahechizo de pirita", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de pirita - MRD - es - NM - 1.jpg"}, {"name": "Bombahechizo de rayo solar", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de rayo solar - MRD - es - NM - 1 (2).jpg"}, {"name": "Bombahechizo de rayo solar", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de rayo solar - MRD - es - NM - 1 (3).jpg"}, {"name": "Bombahechizo de rayo solar", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de rayo solar - MRD - es - NM - 1.jpg"}, {"name": "Bombahechizo de éter", "set": "j22", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de éter - J22 - es - NM - 1 (2).jpg"}, {"name": "Bombahechizo de éter", "set": "j22", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de éter - J22 - es - NM - 1 (3).jpg"}, {"name": "Bombahechizo de éter", "set": "j22", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de éter - J22 - es - NM - 1 (4).jpg"}, {"name": "Bombahechizo de éter", "set": "j22", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de éter - J22 - es - NM - 1 (5).jpg"}, {"name": "Bombahechizo de éter", "set": "j22", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de éter - J22 - es - NM - 1 (6).jpg"}, {"name": "Bombahechizo de éter", "set": "j22", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de éter - J22 - es - NM - 1 (7).jpg"}, {"name": "Bombahechizo de éter", "set": "j22", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de éter - J22 - es - NM - 1 (8).jpg"}, {"name": "Bombahechizo de éter", "set": "j22", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de éter - J22 - es - NM - 1 (9).jpg"}, {"name": "Bombahechizo de éter", "set": "j22", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo de éter - J22 - es - NM - 1.jpg"}, {"name": "Bombahechizo necrógena", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo necrógena - MRD - es - NM - 1 (2).jpg"}, {"name": "Bombahechizo necrógena", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo necrógena - MRD - es - NM - 1 (3).jpg"}, {"name": "Bombahechizo necrógena", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo necrógena - MRD - es - NM - 1 (4).jpg"}, {"name": "Bombahechizo necrógena", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo necrógena - MRD - es - NM - 1 (5).jpg"}, {"name": "Bombahechizo necrógena", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo necrógena - MRD - es - NM - 1 (6).jpg"}, {"name": "Bombahechizo necrógena", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo necrógena - MRD - es - NM - 1.jpg"}, {"name": "Bombahechizo nihil", "set": "brc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Bombahechizo nihil - BRC - es - NM - 1.jpg"}, {"name": "Bonesplitter", "set": "cmr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.21", "imageFile": "Bonesplitter - CMR - en - NM - 1.jpg"}, {"name": "Chalice of the Void", "set": "a25", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "10.672", "priceUsdRef": "14.23", "imageFile": "Chalice of the Void - A25 - en - NM - 1 (2).jpg"}, {"name": "Chalice of the Void", "set": "a25", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "10.672", "priceUsdRef": "14.23", "imageFile": "Chalice of the Void - A25 - en - NM - 1.jpg"}, {"name": "Chromatic Sphere", "set": "jmp", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.28", "imageFile": "Chromatic Sphere - JMP - en - NM_FOIL - 1.jpg"}, {"name": "Chromatic Star", "set": "tsr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.25", "imageFile": "Chromatic Star - TSR - en - NM - 1 (2).jpg"}, {"name": "Chromatic Star", "set": "tsr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.25", "imageFile": "Chromatic Star - TSR - en - NM - 1 (3).jpg"}, {"name": "Chromatic Star", "set": "tsr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.25", "imageFile": "Chromatic Star - TSR - en - NM - 1.jpg"}, {"name": "Cimitarra leonina", "set": "j25", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Cimitarra leonina - J25 - es - NM - 1 (2).jpg"}, {"name": "Cimitarra leonina", "set": "j25", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Cimitarra leonina - J25 - es - NM - 1 (3).jpg"}, {"name": "Cimitarra leonina", "set": "j25", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Cimitarra leonina - J25 - es - NM - 1.jpg"}, {"name": "Clay Revenant", "set": "bro", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.07", "imageFile": "Clay Revenant - BRO - en - NM - 1.jpg"}, {"name": "Clockwork Beetle", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.12", "imageFile": "Clockwork Beetle - MRD - en - NM - 1.jpg"}, {"name": "Coastal Bulwark", "set": "bro", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.07", "imageFile": "Coastal Bulwark - BRO - en - NM - 1.jpg"}, {"name": "Collector's Vault", "set": "woe", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "615", "priceUsdRef": "0.82", "imageFile": "Collector's Vault - WOE - en - NM - 1.jpg"}, {"name": "Compass Gnome", "set": "lci", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.04", "imageFile": "Compass Gnome - LCI - en - NM - 1.jpg"}, {"name": "Conducto de poder", "set": "ncc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Conducto de poder - NCC - es - NM - 1.jpg"}, {"name": "Cryptex", "set": "mkm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.06", "imageFile": "Cryptex - MKM - en - NM - 1.jpg"}, {"name": "Cuernos de combate vórrac", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Cuernos de combate vórrac - MRD - es - NM - 1 (2).jpg"}, {"name": "Cuernos de combate vórrac", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Cuernos de combate vórrac - MRD - es - NM - 1 (3).jpg"}, {"name": "Cuernos de combate vórrac", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Cuernos de combate vórrac - MRD - es - NM - 1.jpg"}, {"name": "Cursed Totem", "set": "mh2", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "4.440", "priceUsdRef": "5.92", "imageFile": "Cursed Totem - MH2 - en - NM_FOIL - 1 (2).jpg"}, {"name": "Cursed Totem", "set": "mh2", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "4.440", "priceUsdRef": "5.92", "imageFile": "Cursed Totem - MH2 - en - NM_FOIL - 1.jpg"}, {"name": "Cáliz del vacío", "set": "lcc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Cáliz del vacío - LCC - es - NM - 1.jpg"}, {"name": "Damping Sphere", "set": "dmr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.46", "imageFile": "Damping Sphere - DMR - en - NM - 1 (2).jpg"}, {"name": "Damping Sphere", "set": "dmr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.46", "imageFile": "Damping Sphere - DMR - en - NM - 1 (3).jpg"}, {"name": "Damping Sphere", "set": "dmr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.46", "imageFile": "Damping Sphere - DMR - en - NM - 1.jpg"}, {"name": "Diamante marmóleo", "set": "clb", "lang": "es", "condition": "NM", "isFoil": true, "format": "Legacy", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Diamante marmóleo - CLB - es - NM_FOIL - 1.jpg"}, {"name": "Disruptor Flute", "set": "mh3", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "1.118", "priceUsdRef": "1.49", "imageFile": "Disruptor Flute - MH3 - en - NM - 1 (2).jpg"}, {"name": "Disruptor Flute", "set": "mh3", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "1.118", "priceUsdRef": "1.49", "imageFile": "Disruptor Flute - MH3 - en - NM - 1.jpg"}, {"name": "Elixir of Immortality", "set": "c21", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.66", "imageFile": "Elixir of Immortality - C21 - en - NM - 1.jpg"}, {"name": "Empyrial Plate", "set": "c16", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "758", "priceUsdRef": "1.01", "imageFile": "Empyrial Plate - C16 - en - NM - 1.jpg"}, {"name": "Engineered Explosives", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "2.092", "priceUsdRef": "2.79", "imageFile": "Engineered Explosives - 2XM - en - NM - 1 (2).jpg"}, {"name": "Engineered Explosives", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "2.092", "priceUsdRef": "2.79", "imageFile": "Engineered Explosives - 2XM - en - NM - 1 (3).jpg"}, {"name": "Engineered Explosives", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "2.092", "priceUsdRef": "2.79", "imageFile": "Engineered Explosives - 2XM - en - NM - 1.jpg"}, {"name": "Engineered Explosives", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "2.302", "priceUsdRef": "3.07", "imageFile": "Engineered Explosives - 2XM - en - NM_FOIL - 1.jpg"}, {"name": "Escarabajo mecánico", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Escarabajo mecánico - MRD - es - NM - 1 (2).jpg"}, {"name": "Escarabajo mecánico", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Escarabajo mecánico - MRD - es - NM - 1 (3).jpg"}, {"name": "Escarabajo mecánico", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Escarabajo mecánico - MRD - es - NM - 1 (4).jpg"}, {"name": "Escarabajo mecánico", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Escarabajo mecánico - MRD - es - NM - 1 (5).jpg"}, {"name": "Escarabajo mecánico", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Escarabajo mecánico - MRD - es - NM - 1 (6).jpg"}, {"name": "Escarabajo mecánico", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Escarabajo mecánico - MRD - es - NM - 1 (7).jpg"}, {"name": "Escarabajo mecánico", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Escarabajo mecánico - MRD - es - NM - 1.jpg"}, {"name": "Esfera cromática", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Esfera cromática - MRD - es - NM - 1 (2).jpg"}, {"name": "Esfera cromática", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Esfera cromática - MRD - es - NM - 1 (3).jpg"}, {"name": "Esfera cromática", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Esfera cromática - MRD - es - NM - 1.jpg"}, {"name": "Esfera de madera", "set": "8ed", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Esfera de madera - 8ED - es - NM - 1.jpg"}, {"name": "Fruto de la Maraña", "set": "9ed", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Fruto de la Maraña - 9ED - es - NM - 1 (2).jpg"}, {"name": "Fruto de la Maraña", "set": "9ed", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Fruto de la Maraña - 9ED - es - NM - 1 (3).jpg"}, {"name": "Fruto de la Maraña", "set": "9ed", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Fruto de la Maraña - 9ED - es - NM - 1 (4).jpg"}, {"name": "Fruto de la Maraña", "set": "9ed", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Fruto de la Maraña - 9ED - es - NM - 1 (5).jpg"}, {"name": "Fruto de la Maraña", "set": "9ed", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Fruto de la Maraña - 9ED - es - NM - 1.jpg"}, {"name": "Fundición thran", "set": "uds", "lang": "es", "condition": "NM", "isFoil": false, "format": "Legacy", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Fundición thran - UDS - es - NM - 1 (2).jpg"}, {"name": "Fundición thran", "set": "uds", "lang": "es", "condition": "NM", "isFoil": false, "format": "Legacy", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Fundición thran - UDS - es - NM - 1.jpg"}, {"name": "Galvanic Key", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.13", "imageFile": "Galvanic Key - MRD - en - NM - 1.jpg"}, {"name": "Garras escarbadoras", "set": "rna", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Garras escarbadoras - RNA - es - NM - 1 (2).jpg"}, {"name": "Garras escarbadoras", "set": "rna", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Garras escarbadoras - RNA - es - NM - 1 (3).jpg"}, {"name": "Garras escarbadoras", "set": "rna", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Garras escarbadoras - RNA - es - NM - 1.jpg"}, {"name": "Grebas relámpago", "set": "sld", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Grebas relámpago - SLD - es - NM - 1.jpg"}, {"name": "Guantes de piel de gólem", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Guantes de piel de gólem - MRD - es - NM - 1 (2).jpg"}, {"name": "Guantes de piel de gólem", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Guantes de piel de gólem - MRD - es - NM - 1 (3).jpg"}, {"name": "Guantes de piel de gólem", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Guantes de piel de gólem - MRD - es - NM - 1 (4).jpg"}, {"name": "Guantes de piel de gólem", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Guantes de piel de gólem - MRD - es - NM - 1.jpg"}, {"name": "Guantes vúlshok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Guantes vúlshok - MRD - es - NM - 1 (2).jpg"}, {"name": "Guantes vúlshok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Guantes vúlshok - MRD - es - NM - 1 (3).jpg"}, {"name": "Guantes vúlshok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Guantes vúlshok - MRD - es - NM - 1 (4).jpg"}, {"name": "Guantes vúlshok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Guantes vúlshok - MRD - es - NM - 1 (5).jpg"}, {"name": "Guantes vúlshok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Guantes vúlshok - MRD - es - NM - 1.jpg"}, {"name": "Hunter's Blowgun", "set": "lci", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.09", "imageFile": "Hunter's Blowgun - LCI - en - NM - 1.jpg"}, {"name": "Iron Lance", "set": "mmq", "lang": "en", "condition": "NM", "isFoil": false, "format": "Legacy", "quantity": 1, "price": "500", "priceUsdRef": "0.20", "imageFile": "Iron Lance - MMQ - en - NM - 1.jpg"}, {"name": "Iron Myr", "set": "som", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "518", "priceUsdRef": "0.69", "imageFile": "Iron Myr - SOM - en - NM - 1 (2).jpg"}, {"name": "Iron Myr", "set": "som", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "518", "priceUsdRef": "0.69", "imageFile": "Iron Myr - SOM - en - NM - 1.jpg"}, {"name": "It That Heralds the End", "set": "mh3", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.30", "imageFile": "It That Heralds the End - MH3 - en - NM - 1.jpg"}, {"name": "Jarra de soldadura", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Jarra de soldadura - MRD - es - NM - 1 (2).jpg"}, {"name": "Jarra de soldadura", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Jarra de soldadura - MRD - es - NM - 1 (3).jpg"}, {"name": "Jarra de soldadura", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Jarra de soldadura - MRD - es - NM - 1 (4).jpg"}, {"name": "Jarra de soldadura", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Jarra de soldadura - MRD - es - NM - 1 (5).jpg"}, {"name": "Jarra de soldadura", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Jarra de soldadura - MRD - es - NM - 1 (6).jpg"}, {"name": "Jarra de soldadura", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Jarra de soldadura - MRD - es - NM - 1.jpg"}, {"name": "Lantern of the Lost", "set": "vow", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.10", "imageFile": "Lantern of the Lost - VOW - en - NM - 1 (2).jpg"}, {"name": "Lantern of the Lost", "set": "vow", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.10", "imageFile": "Lantern of the Lost - VOW - en - NM - 1.jpg"}, {"name": "Leaden Myr", "set": "som", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.66", "imageFile": "Leaden Myr - SOM - en - NM - 1.jpg"}, {"name": "Leaden Myr", "set": "som", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "9.270", "priceUsdRef": "12.36", "imageFile": "Leaden Myr - SOM - en - NM_FOIL - 1.jpg"}, {"name": "Libro de cocina del infierno", "set": "mh2", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Libro de cocina del infierno - MH2 - es - NM - 1 (2).jpg"}, {"name": "Libro de cocina del infierno", "set": "mh2", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Libro de cocina del infierno - MH2 - es - NM - 1.jpg"}, {"name": "Lifespark Spellbomb", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.12", "imageFile": "Lifespark Spellbomb - MRD - en - NM - 1.jpg"}, {"name": "Llave galvánica", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Llave galvánica - MRD - es - NM - 1 (2).jpg"}, {"name": "Llave galvánica", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Llave galvánica - MRD - es - NM - 1 (3).jpg"}, {"name": "Llave galvánica", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Llave galvánica - MRD - es - NM - 1.jpg"}, {"name": "Maza de hierro muerto", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Maza de hierro muerto - MRD - es - NM - 1 (2).jpg"}, {"name": "Maza de hierro muerto", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Maza de hierro muerto - MRD - es - NM - 1.jpg"}, {"name": "Mazemind Tome", "set": "fdn", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.24", "imageFile": "Mazemind Tome - FDN - en - NM_FOIL - 1.jpg"}, {"name": "Mestizo chatarreño", "set": "bro", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Mestizo chatarreño - BRO - es - NM - 1.jpg"}, {"name": "Mishra's Bauble", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "1.365", "priceUsdRef": "1.82", "imageFile": "Mishra's Bauble - 2XM - en - NM - 1 (2).jpg"}, {"name": "Mishra's Bauble", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "1.365", "priceUsdRef": "1.82", "imageFile": "Mishra's Bauble - 2XM - en - NM - 1 (3).jpg"}, {"name": "Mishra's Bauble", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "1.365", "priceUsdRef": "1.82", "imageFile": "Mishra's Bauble - 2XM - en - NM - 1 (4).jpg"}, {"name": "Mishra's Bauble", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "1.365", "priceUsdRef": "1.82", "imageFile": "Mishra's Bauble - 2XM - en - NM - 1.jpg"}, {"name": "Moldea acero áuriok", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Moldea acero áuriok - MRD - es - NM_FOIL - 1.jfif"}, {"name": "Moss Diamond", "set": "clb", "lang": "en", "condition": "NM", "isFoil": false, "format": "Legacy", "quantity": 1, "price": "690", "priceUsdRef": "0.92", "imageFile": "Moss Diamond - CLB - en - NM - 1.jpg"}, {"name": "Moto aérea de alta velocidad", "set": "neo", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Moto aérea de alta velocidad - NEO - es - NM - 1.jpg"}, {"name": "Muro de acero", "set": "ddf", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Muro de acero - DDF - es - NM - 1 (2).jpg"}, {"name": "Muro de acero", "set": "ddf", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Muro de acero - DDF - es - NM - 1 (3).jpg"}, {"name": "Muro de acero", "set": "ddf", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Muro de acero - DDF - es - NM - 1 (4).jpg"}, {"name": "Muro de acero", "set": "ddf", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Muro de acero - DDF - es - NM - 1 (5).jpg"}, {"name": "Muro de acero", "set": "ddf", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Muro de acero - DDF - es - NM - 1 (6).jpg"}, {"name": "Muro de acero", "set": "ddf", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Muro de acero - DDF - es - NM - 1 (7).jpg"}, {"name": "Muro de acero", "set": "ddf", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Muro de acero - DDF - es - NM - 1.jpg"}, {"name": "Myr alfa", "set": "ps11", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr alfa - PS11 - es - NM - 1 (2).jpg"}, {"name": "Myr alfa", "set": "ps11", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr alfa - PS11 - es - NM - 1 (3).jpg"}, {"name": "Myr alfa", "set": "ps11", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr alfa - PS11 - es - NM - 1 (4).jpg"}, {"name": "Myr alfa", "set": "ps11", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr alfa - PS11 - es - NM - 1 (5).jpg"}, {"name": "Myr alfa", "set": "ps11", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr alfa - PS11 - es - NM - 1 (6).jpg"}, {"name": "Myr alfa", "set": "ps11", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr alfa - PS11 - es - NM - 1 (7).jpg"}, {"name": "Myr alfa", "set": "ps11", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr alfa - PS11 - es - NM - 1.jpg"}, {"name": "Myr de cobre", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de cobre - SOM - es - NM - 1 (2).jpg"}, {"name": "Myr de cobre", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de cobre - SOM - es - NM - 1 (3).jpg"}, {"name": "Myr de cobre", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de cobre - SOM - es - NM - 1.jpg"}, {"name": "Myr de hierro", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de hierro - SOM - es - NM - 1 (2).jpg"}, {"name": "Myr de hierro", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de hierro - SOM - es - NM - 1 (3).jpg"}, {"name": "Myr de hierro", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de hierro - SOM - es - NM - 1 (4).jpg"}, {"name": "Myr de hierro", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de hierro - SOM - es - NM - 1 (5).jpg"}, {"name": "Myr de hierro", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de hierro - SOM - es - NM - 1.jpg"}, {"name": "Myr de oro", "set": "nec", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de oro - NEC - es - NM - 1 (2).jpg"}, {"name": "Myr de oro", "set": "nec", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de oro - NEC - es - NM - 1 (3).jpg"}, {"name": "Myr de oro", "set": "nec", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de oro - NEC - es - NM - 1 (4).jpg"}, {"name": "Myr de oro", "set": "nec", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de oro - NEC - es - NM - 1.jpg"}, {"name": "Myr de plomo", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de plomo - SOM - es - NM - 1 (2).jpg"}, {"name": "Myr de plomo", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de plomo - SOM - es - NM - 1 (3).jpg"}, {"name": "Myr de plomo", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de plomo - SOM - es - NM - 1 (4).jpg"}, {"name": "Myr de plomo", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de plomo - SOM - es - NM - 1 (5).jpg"}, {"name": "Myr de plomo", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de plomo - SOM - es - NM - 1 (6).jpg"}, {"name": "Myr de plomo", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de plomo - SOM - es - NM - 1 (7).jpg"}, {"name": "Myr de plomo", "set": "som", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr de plomo - SOM - es - NM - 1.jpg"}, {"name": "Myr omega", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr omega - MRD - es - NM - 1 (2).jpg"}, {"name": "Myr omega", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr omega - MRD - es - NM - 1.jpg"}, {"name": "Myr omega", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Myr omega - MRD - es - NM_FOIL - 1.jpg"}, {"name": "Necrogen Spellbomb", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.17", "imageFile": "Necrogen Spellbomb - MRD - en - NM - 1.jpg"}, {"name": "Neurok Hoversail", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.13", "imageFile": "Neurok Hoversail - MRD - en - NM - 1 (2).jpg"}, {"name": "Neurok Hoversail", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.13", "imageFile": "Neurok Hoversail - MRD - en - NM - 1.jpg"}, {"name": "Nihil Spellbomb", "set": "a25", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "1.050", "priceUsdRef": "1.40", "imageFile": "Nihil Spellbomb - A25 - en - NM - 1 (2).jpg"}, {"name": "Nihil Spellbomb", "set": "a25", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "1.050", "priceUsdRef": "1.40", "imageFile": "Nihil Spellbomb - A25 - en - NM - 1.jpg"}, {"name": "Omega Myr", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.17", "imageFile": "Omega Myr - MRD - en - NM - 1.jpg"}, {"name": "Ornitóptero", "set": "dmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Ornitóptero - DMR - es - NM - 1 (2).jpg"}, {"name": "Ornitóptero", "set": "dmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Ornitóptero - DMR - es - NM - 1 (3).jpg"}, {"name": "Ornitóptero", "set": "dmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Ornitóptero - DMR - es - NM - 1 (4).jpg"}, {"name": "Ornitóptero", "set": "dmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Ornitóptero - DMR - es - NM - 1 (5).jpg"}, {"name": "Ornitóptero", "set": "dmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Ornitóptero - DMR - es - NM - 1 (6).jpg"}, {"name": "Ornitóptero", "set": "dmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Ornitóptero - DMR - es - NM - 1.jpg"}, {"name": "Parásito desguazador", "set": "kld", "lang": "es", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Parásito desguazador - KLD - es - NM_FOIL - 1 (2).jpg"}, {"name": "Parásito desguazador", "set": "kld", "lang": "es", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Parásito desguazador - KLD - es - NM_FOIL - 1 (3).jpg"}, {"name": "Parásito desguazador", "set": "kld", "lang": "es", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Parásito desguazador - KLD - es - NM_FOIL - 1.jpg"}, {"name": "Pearl Medallion", "set": "mh3", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "3.060", "priceUsdRef": "4.08", "imageFile": "Pearl Medallion - MH3 - en - NM_FOIL - 1.jpg"}, {"name": "Pithing Needle", "set": "2x2", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.57", "imageFile": "Pithing Needle - 2X2 - en - NM - 1 (2).jpg"}, {"name": "Pithing Needle", "set": "2x2", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.57", "imageFile": "Pithing Needle - 2X2 - en - NM - 1 (3).jpg"}, {"name": "Pithing Needle", "set": "2x2", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.57", "imageFile": "Pithing Needle - 2X2 - en - NM - 1.jpg"}, {"name": "Pluma de Tel-Jilad", "set": "mrd", "lang": "es", "condition": "ES", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Pluma de Tel-Jilad - MRD - es - NM - 1 (2).jpg"}, {"name": "Pluma de Tel-Jilad", "set": "mrd", "lang": "es", "condition": "ES", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Pluma de Tel-Jilad - MRD - es - NM - 1.jpg"}, {"name": "Pluma de Tel-Jilad", "set": "mrd", "lang": "es", "condition": "ES", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Pluma de Tel-Jilad - MRD - es - NM_FOIL - 1.jpg"}, {"name": "Pulgar de Krark", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Pulgar de Krark - MRD - es - NM - 1.jpg"}, {"name": "Pyrite Spellbomb", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.12", "imageFile": "Pyrite Spellbomb - 2XM - en - NM - 1.jpg"}, {"name": "Quebrantahuesos", "set": "cmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Quebrantahuesos - CMR - es - NM - 1 (2).jpg"}, {"name": "Quebrantahuesos", "set": "cmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Quebrantahuesos - CMR - es - NM - 1 (3).jpg"}, {"name": "Quebrantahuesos", "set": "cmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Quebrantahuesos - CMR - es - NM - 1 (4).jpg"}, {"name": "Quebrantahuesos", "set": "cmr", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Quebrantahuesos - CMR - es - NM - 1.jpg"}, {"name": "Ratchet Bomb", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "668", "priceUsdRef": "0.89", "imageFile": "Ratchet Bomb - 2XM - en - NM - 1.jpg"}, {"name": "Recuperador myr", "set": "c16", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Recuperador myr - C16 - es - NM - 1.jpg"}, {"name": "Relic of Progenitus", "set": "ema", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "3.480", "priceUsdRef": "4.64", "imageFile": "Relic of Progenitus - EMA - en - NM - 1 (2).jpg"}, {"name": "Relic of Progenitus", "set": "ema", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "3.480", "priceUsdRef": "4.64", "imageFile": "Relic of Progenitus - EMA - en - NM - 1.jpg"}, {"name": "Reliquia de Progenitus", "set": "brc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Reliquia de Progenitus - BRC - es - NM - 1.jpg"}, {"name": "Santuario del sínodo", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Santuario del sínodo - MRD - es - NM - 1 (2).jpg"}, {"name": "Santuario del sínodo", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Santuario del sínodo - MRD - es - NM - 1 (3).jpg"}, {"name": "Santuario del sínodo", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Santuario del sínodo - MRD - es - NM - 1.jpg"}, {"name": "Scrapheap Scrounger", "set": "kld", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.19", "imageFile": "Scrapheap Scrounger - KLD - en - NM - 1 (2).jpg"}, {"name": "Scrapheap Scrounger", "set": "kld", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.19", "imageFile": "Scrapheap Scrounger - KLD - en - NM - 1 (3).jpg"}, {"name": "Scrapheap Scrounger", "set": "kld", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.19", "imageFile": "Scrapheap Scrounger - KLD - en - NM - 1 (4).jpg"}, {"name": "Scrapheap Scrounger", "set": "kld", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.19", "imageFile": "Scrapheap Scrounger - KLD - en - NM - 1.jpg"}, {"name": "Scrapheap Scrounger", "set": "kld", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.51", "imageFile": "Scrapheap Scrounger - KLD - en - NM_FOIL - 1.jpg"}, {"name": "Scrapwork Mutt", "set": "bro", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.17", "imageFile": "Scrapwork Mutt - BRO - en - NM - 1.jpg"}, {"name": "Shardmage's Rescue", "set": "dsk", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.17", "imageFile": "Shardmage's Rescue - DSK - en - NM - 1.jfif"}, {"name": "Sierra de hueso", "set": "brr", "lang": "es", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Sierra de hueso - BRR - es - NM_FOIL - 1.jpg"}, {"name": "Siervo mental myr", "set": "mrd", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Siervo mental myr - MRD - es - NM - 1.jpg"}, {"name": "Soulless Jailer", "set": "one", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "585", "priceUsdRef": "0.78", "imageFile": "Soulless Jailer - ONE - en - NM_FOIL - 1 (2).jpg"}, {"name": "Soulless Jailer", "set": "one", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "585", "priceUsdRef": "0.78", "imageFile": "Soulless Jailer - ONE - en - NM_FOIL - 1.jpg"}, {"name": "Spectrum Sentinel", "set": "bro", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.14", "imageFile": "Spectrum Sentinel - BRO - en - NM - 1.jpg"}, {"name": "Springleaf Drum", "set": "2xm", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "1.942", "priceUsdRef": "2.59", "imageFile": "Springleaf Drum - 2XM - en - NM_FOIL - 1.jpg"}, {"name": "Starfield Shepherd", "set": "eoe", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.59", "imageFile": "Starfield Shepherd - EOE - en - NM_FOIL - 1.jfif"}, {"name": "Steel Wall", "set": "td2", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Steel Wall - TD2 - en - NM - 1.jpg"}, {"name": "Stone of Erech", "set": "ltr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.18", "imageFile": "Stone of Erech - LTR - en - NM - 1 (2).jpg"}, {"name": "Stone of Erech", "set": "ltr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.18", "imageFile": "Stone of Erech - LTR - en - NM - 1 (3).jpg"}, {"name": "Stone of Erech", "set": "ltr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.18", "imageFile": "Stone of Erech - LTR - en - NM - 1 (4).jpg"}, {"name": "Stone of Erech", "set": "ltr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.18", "imageFile": "Stone of Erech - LTR - en - NM - 1.jpg"}, {"name": "Sunbeam Spellbomb", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.19", "imageFile": "Sunbeam Spellbomb - MRD - en - NM - 1 (2).jpg"}, {"name": "Sunbeam Spellbomb", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.19", "imageFile": "Sunbeam Spellbomb - MRD - en - NM - 1.jpg"}, {"name": "Synod Sanctum", "set": "arc", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.24", "imageFile": "Synod Sanctum - ARC - en - NM - 1.jpg"}, {"name": "Talismán de la dominancia", "set": "fic", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Talismán de la dominancia - FIC - es - NM - 1 (2).jpg"}, {"name": "Talismán de la dominancia", "set": "fic", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Talismán de la dominancia - FIC - es - NM - 1 (3).jpg"}, {"name": "Talismán de la dominancia", "set": "fic", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Talismán de la dominancia - FIC - es - NM - 1 (4).jpg"}, {"name": "Talismán de la dominancia", "set": "fic", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Talismán de la dominancia - FIC - es - NM - 1 (5).jpg"}, {"name": "Talismán de la dominancia", "set": "fic", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Talismán de la dominancia - FIC - es - NM - 1 (6).jpg"}, {"name": "Talismán de la dominancia", "set": "fic", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Talismán de la dominancia - FIC - es - NM - 1.jpg"}, {"name": "Talismán de la unidad", "set": "mic", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Talismán de la unidad - MIC - es - NM - 1 (2).jpg"}, {"name": "Talismán de la unidad", "set": "mic", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Talismán de la unidad - MIC - es - NM - 1.jpg"}, {"name": "Talismán del progreso", "set": "fic", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Talismán del progreso - FIC - es - NM - 1.jpg"}, {"name": "Tanglebloom", "set": "9ed", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.11", "imageFile": "Tanglebloom - 9ED - en - NM - 1.jpg"}, {"name": "The Stone Brain", "set": "bro", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "698", "priceUsdRef": "0.93", "imageFile": "The Stone Brain - BRO - en - NM_FOIL - 1.jpg"}, {"name": "The Underworld Cookbook", "set": "mh2", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.25", "imageFile": "The Underworld Cookbook - MH2 - en - NM - 1 (2).jpg"}, {"name": "The Underworld Cookbook", "set": "mh2", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.25", "imageFile": "The Underworld Cookbook - MH2 - en - NM - 1.jpg"}, {"name": "Thinking Cap", "set": "mkm", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.05", "imageFile": "Thinking Cap - MKM - en - NM - 1.jpg"}, {"name": "Tomo pierdementes", "set": "brr", "lang": "es", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Tomo pierdementes - BRR - es - NM_FOIL - 1 (2).jpg"}, {"name": "Tomo pierdementes", "set": "brr", "lang": "es", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Tomo pierdementes - BRR - es - NM_FOIL - 1 (3).jpg"}, {"name": "Tomo pierdementes", "set": "brr", "lang": "es", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Tomo pierdementes - BRR - es - NM_FOIL - 1.jpg"}, {"name": "Tormod's Crypt", "set": "dmr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.44", "imageFile": "Tormod's Crypt - DMR - en - NM - 1.jpg"}, {"name": "Transformador solar", "set": "drc", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Transformador solar - DRC - es - NM - 1.jpg"}, {"name": "Unlicensed Hearse", "set": "snc", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.36", "imageFile": "Unlicensed Hearse - SNC - en - NM - 1.jpg"}, {"name": "Unlicensed Hearse", "set": "snc", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "555", "priceUsdRef": "0.74", "imageFile": "Unlicensed Hearse - SNC - en - NM_FOIL - 1.jpg"}, {"name": "Vasija de pensamientos", "set": "fic", "lang": "es", "condition": "NM", "isFoil": true, "format": "Legacy", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Vasija de pensamientos - FIC - es - NM_FOIL - 1.jpg"}, {"name": "Viridian Longbow", "set": "afc", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "645", "priceUsdRef": "0.86", "imageFile": "Viridian Longbow - AFC - en - NM - 1 (2).jpg"}, {"name": "Viridian Longbow", "set": "afc", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "645", "priceUsdRef": "0.86", "imageFile": "Viridian Longbow - AFC - en - NM - 1.jpg"}, {"name": "Void Mirror", "set": "mh2", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.45", "imageFile": "Void Mirror - MH2 - en - NM_FOIL - 1 (2).jpg"}, {"name": "Void Mirror", "set": "mh2", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.45", "imageFile": "Void Mirror - MH2 - en - NM_FOIL - 1 (3).jpg"}, {"name": "Void Mirror", "set": "mh2", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.45", "imageFile": "Void Mirror - MH2 - en - NM_FOIL - 1.jpg"}, {"name": "Vorrac Battlehorns", "set": "mrd", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "592", "priceUsdRef": "0.79", "imageFile": "Vorrac Battlehorns - MRD - en - NM - 1.jpg"}, {"name": "Witch's Oven", "set": "eld", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.56", "imageFile": "Witch's Oven - ELD - en - NM - 1 (2).jpg"}, {"name": "Witch's Oven", "set": "eld", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.56", "imageFile": "Witch's Oven - ELD - en - NM - 1.jpg"}, {"name": "Wizard's Rockets", "set": "ltr", "lang": "en", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.09", "imageFile": "Wizard's Rockets - LTR - en - NM - 1.jpg"}, {"name": "Yotian Frontliner", "set": "bro", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.09", "imageFile": "Yotian Frontliner - BRO - en - NM_FOIL - 1 (2).jpg"}, {"name": "Yotian Frontliner", "set": "bro", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.09", "imageFile": "Yotian Frontliner - BRO - en - NM_FOIL - 1 (3).jpg"}, {"name": "Yotian Frontliner", "set": "bro", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.09", "imageFile": "Yotian Frontliner - BRO - en - NM_FOIL - 1 (4).jpg"}, {"name": "Yotian Frontliner", "set": "bro", "lang": "en", "condition": "NM", "isFoil": true, "format": "Modern", "quantity": 1, "price": "500", "priceUsdRef": "0.09", "imageFile": "Yotian Frontliner - BRO - en - NM_FOIL - 1.jpg"}, {"name": "Ídolo de los dioses falsos", "set": "mh3", "lang": "es", "condition": "NM", "isFoil": false, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Ídolo de los dioses falsos - MH3 - es - NM - 1.jpg"}];
+
+    let filteredCards = [...cardsData];
+    let currentPage = 1;
+
+    const $ = (id) => document.getElementById(id);
+
+    function debounce(fn, delay) {
+        let timer = null;
+        return (...args) => {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
+    }
+
+    function buildCardElement(card) {
+        const article = document.createElement("article");
+        article.className = "card";
+
+        const imageWrapper = document.createElement("div");
+        imageWrapper.className = "card-image-wrapper";
+
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.alt = card.name || "Carta Magic";
+        img.src = IMAGE_BASE_PATH + "/" + encodeURI(card.imageFile);
+        imageWrapper.appendChild(img);
+
+        if (card.isFoil) {
+            const foilChip = document.createElement("div");
+            foilChip.className = "foil-chip";
+            foilChip.textContent = "FOIL";
+            imageWrapper.appendChild(foilChip);
+        }
+
+        const body = document.createElement("div");
+        body.className = "card-body";
+
+        const nameEl = document.createElement("div");
+        nameEl.className = "card-name";
+        nameEl.textContent = card.name;
+        body.appendChild(nameEl);
+
+        const tags = document.createElement("div");
+        tags.className = "card-tags";
+
+        const tagSet = document.createElement("span");
+        tagSet.className = "card-tag";
+        tagSet.textContent = (card.set || "").toUpperCase() || "SET";
+        tags.appendChild(tagSet);
+
+        if (card.format) {
+            const tagFormat = document.createElement("span");
+            tagFormat.className = "card-tag";
+            tagFormat.textContent = card.format;
+            tags.appendChild(tagFormat);
+        }
+
+        if (card.lang) {
+            const tagLang = document.createElement("span");
+            tagLang.className = "card-tag";
+            tagLang.textContent = (card.lang || "").toUpperCase();
+            tags.appendChild(tagLang);
+        }
+
+        if (card.condition) {
+            const tagCond = document.createElement("span");
+            tagCond.className = "card-tag";
+            tagCond.textContent = card.condition;
+            tags.appendChild(tagCond);
+        }
+
+        body.appendChild(tags);
+
+        const footer = document.createElement("div");
+        footer.className = "card-footer";
+
+        const priceBox = document.createElement("div");
+        const priceMain = document.createElement("div");
+        priceMain.className = "price-main";
+        priceMain.textContent = "$ " + card.price;
+        priceBox.appendChild(priceMain);
+
+        if (card.priceUsdRef) {
+            const priceRef = document.createElement("div");
+            priceRef.className = "price-ref";
+            priceRef.textContent = "Ref: USD " + card.priceUsdRef;
+            priceBox.appendChild(priceRef);
+        }
+
+        footer.appendChild(priceBox);
+
+        const qtyPill = document.createElement("div");
+        qtyPill.className = "qty-pill";
+        qtyPill.textContent = "Stock: " + (card.quantity || 1);
+        footer.appendChild(qtyPill);
+
+        body.appendChild(footer);
+
+        article.appendChild(imageWrapper);
+        article.appendChild(body);
+        return article;
+    }
+
+    function renderCards() {
+        const container = document.getElementById("cardsContainer");
+        const emptyState = document.getElementById("emptyState");
+        const totalCountEl = document.getElementById("totalCount");
+        const visibleCountEl = document.getElementById("visibleCount");
+        const pageInfo = document.getElementById("pageInfo");
+
+        totalCountEl.textContent = String(cardsData.length);
+
+        if (!filteredCards.length) {
+            container.innerHTML = "";
+            emptyState.style.display = "block";
+            visibleCountEl.textContent = "0";
+            pageInfo.textContent = "";
+            document.getElementById("pagination").innerHTML = "";
+            return;
+        }
+
+        emptyState.style.display = "none";
+
+        const totalPages = Math.max(1, Math.ceil(filteredCards.length / PAGE_SIZE));
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        const startIdx = (currentPage - 1) * PAGE_SIZE;
+        const endIdx = startIdx + PAGE_SIZE;
+        const pageCards = filteredCards.slice(startIdx, endIdx);
+
+        container.innerHTML = "";
+        for (const card of pageCards) {
+            container.appendChild(buildCardElement(card));
+        }
+
+        visibleCountEl.textContent = String(pageCards.length);
+        pageInfo.textContent = "Mostrando página " + currentPage + " de " + totalPages;
+
+        renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+
+        if (totalPages <= 1) {
+            return;
+        }
+
+        const prevBtn = document.createElement("button");
+        prevBtn.className = "page-btn";
+        prevBtn.textContent = "←";
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderCards();
+            }
+        };
+        pagination.appendChild(prevBtn);
+
+        const maxToShow = 7;
+        let start = Math.max(1, currentPage - 3);
+        let end = Math.min(totalPages, start + maxToShow - 1);
+        if (end - start < maxToShow - 1) {
+            start = Math.max(1, end - maxToShow + 1);
+        }
+
+        if (start > 1) {
+            const first = document.createElement("button");
+            first.className = "page-btn";
+            first.textContent = "1";
+            first.onclick = () => {
+                currentPage = 1;
+                renderCards();
+            };
+            pagination.appendChild(first);
+
+            if (start > 2) {
+                const dots = document.createElement("span");
+                dots.className = "page-btn";
+                dots.textContent = "…";
+                pagination.appendChild(dots);
+            }
+        }
+
+        for (let i = start; i <= end; i++) {
+            const btn = document.createElement("button");
+            btn.className = "page-btn" + (i === currentPage ? " active" : "");
+            btn.textContent = String(i);
+            if (i !== currentPage) {
+                btn.onclick = () => {
+                    currentPage = i;
+                    renderCards();
+                };
+            } else {
+                btn.disabled = True;
+            }
+            pagination.appendChild(btn);
+        }
+
+        if (end < totalPages) {
+            if (end < totalPages - 1) {
+                const dots = document.createElement("span");
+                dots.className = "page-btn";
+                dots.textContent = "…";
+                pagination.appendChild(dots);
+            }
+
+            const last = document.createElement("button");
+            last.className = "page-btn";
+            last.textContent = String(totalPages);
+            last.onclick = () => {
+                currentPage = totalPages;
+                renderCards();
+            };
+            pagination.appendChild(last);
+        }
+
+        const nextBtn = document.createElement("button");
+        nextBtn.className = "page-btn";
+        nextBtn.textContent = "→";
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderCards();
+            }
+        };
+        pagination.appendChild(nextBtn);
+    }
+
+    function applyFilters() {
+        const input = document.getElementById("searchInput");
+        const query = (input.value || "").trim().toLowerCase();
+
+        if (!query) {
+            filteredCards = [...cardsData];
+        } else {
+            filteredCards = cardsData.filter((card) => {
+                const haystack = [
+                    card.name || "",
+                    card.set || "",
+                    card.format || "",
+                    card.lang || "",
+                    card.condition || ""
+                ]
+                    .join(" ")
+                    .toLowerCase();
+
+                return haystack.includes(query);
+            });
+        }
+
+        currentPage = 1;
+        renderCards();
+    }
+
+    function init() {
+        const input = document.getElementById("searchInput");
+        input.addEventListener("input", debounce(applyFilters, 200));
+
+        filteredCards = [...cardsData];
+        currentPage = 1;
+        renderCards();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
