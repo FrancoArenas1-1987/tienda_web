@@ -375,13 +375,25 @@
         }
 
         .qty-pill {
-            padding: 0.18rem 0.5rem;
+            padding: 0.18rem 0.7rem;
             border-radius: 999px;
             background: var(--pill-bg);
             border: 1px solid var(--pill-border);
             font-size: 0.7rem;
             color: var(--text-muted);
+            cursor: pointer;
+            transition:
+                background 0.15s ease,
+                color 0.15s ease,
+                border-color 0.15s ease;
         }
+
+        .qty-pill:hover {
+            background: rgba(8, 217, 214, 0.08);
+            color: #e5e7eb;
+            border-color: var(--accent-soft);
+        }
+
 
         .empty-state {
             margin-top: 1.5rem;
@@ -825,7 +837,7 @@
         document.body.style.overflow = "";
     }
 
-    function buildCardElement(card) {
+        function buildCardElement(card) {
         const article = document.createElement("article");
         article.className = "card";
 
@@ -847,6 +859,13 @@
         img.src = IMAGE_BASE_PATH + "/" + encodeURI(mainImageFile || card.imageFile || "");
         imageWrapper.appendChild(img);
 
+        if (card.isFoil) {
+            const foilChip = document.createElement("div");
+            foilChip.className = "foil-chip";
+            foilChip.textContent = "FOIL";
+            imageWrapper.appendChild(foilChip);
+        }
+
         const body = document.createElement("div");
         body.className = "card-body";
 
@@ -858,26 +877,24 @@
         const tags = document.createElement("div");
         tags.className = "card-tags";
 
-        const tagSet = document.createElement("span");
-        tagSet.className = "card-tag";
-        tagSet.textContent = (card.set || "").toUpperCase() || "SET";
-        tags.appendChild(tagSet);
+        const setTag = document.createElement("span");
+        setTag.className = "tag";
+        setTag.textContent = card.setName || card.setCode || "Set desconocido";
+        tags.appendChild(setTag);
 
         if (card.format) {
-            const tagFormat = document.createElement("span");
-            tagFormat.className = "card-tag";
-            tagFormat.textContent = card.format;
-            tags.appendChild(tagFormat);
+            const formatTag = document.createElement("span");
+            formatTag.className = "tag";
+            formatTag.textContent = card.format.toUpperCase();
+            tags.appendChild(formatTag);
         }
 
         if (card.lang) {
             const tagLang = document.createElement("span");
-            tagLang.className = "card-tag";
+            tagLang.className = "tag";
             tagLang.textContent = (card.lang || "").toUpperCase();
             tags.appendChild(tagLang);
         }
-
-        // NO mostramos la condición como chip (NM, LP, etc.) en la card
 
         body.appendChild(tags);
 
@@ -899,30 +916,30 @@
 
         footer.appendChild(priceBox);
 
-        const qtyPill = document.createElement("div");
-        qtyPill.className = "qty-pill";
-        qtyPill.textContent = "Stock: " + (card.quantity || 1);
-        footer.appendChild(qtyPill);
+        // ============================
+        // 🔹 Nuevo botón "Ver stock (n)"
+        // ============================
+        const qtyButton = document.createElement("button");
+        qtyButton.type = "button";
+        qtyButton.className = "qty-pill";
+        qtyButton.textContent = "Ver stock (" + (card.quantity || 1) + ")";
 
+        qtyButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            openCopiesModal(card);
+        });
+
+        footer.appendChild(qtyButton);
         body.appendChild(footer);
 
         article.appendChild(imageWrapper);
         article.appendChild(body);
 
-        // Desktop: abrir modal al pasar el mouse
-        // Móvil (pantalla táctil): abrir modal al hacer tap (click)
-        if (IS_COARSE_POINTER) {
-            article.addEventListener("click", () => {
-                openCopiesModal(card);
-            });
-        } else {
-            article.addEventListener("mouseenter", () => {
-                openCopiesModal(card);
-            });
-        }
+        // ❌ Eliminado: abrir modal con hover o click en toda la carta
 
         return article;
     }
+
 
     function renderCards() {
         const container = document.getElementById("cardsContainer");
