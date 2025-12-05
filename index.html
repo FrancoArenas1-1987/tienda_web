@@ -911,7 +911,7 @@
         if (card.format) metaParts.push(card.format);
         if (card.lang) metaParts.push((card.lang || "").toUpperCase());
         if (card.condition) metaParts.push(card.condition);
-        metaParts.push("Stock: " + (card.quantity || 1));
+        metaParts.push("Stock1: " + (card.quantity || 1));
         metaEl.textContent = metaParts.join(" · ");
 
         bodyEl.innerHTML = "";
