@@ -1054,7 +1054,12 @@
         priceMain.textContent = card.price;   // ya viene con "CK 750" si aplica
         priceBox.appendChild(priceMain);
 
-        
+        if (card.priceUsdRef) {
+            const priceRef = document.createElement("div");
+            priceRef.className = "price-ref";
+            priceBox.appendChild(priceRef);
+        }
+        footer.appendChild(priceBox);
 
         // Fila 2: botón Ver stock
         const qtyButton = document.createElement("button");
