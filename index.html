@@ -670,6 +670,40 @@
             white-space: nowrap;
         }
 
+        /* Botón flotante para publicar cartas (lado izquierdo) */
+        .whatsapp-publish-fab {
+            position: fixed;
+            bottom: 1.4rem;
+            left: 1.4rem;
+            z-index: 1000;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 0.9rem;
+            border-radius: 999px;
+            background: #0ea5e9; /* celeste para diferenciarlo del otro */
+            color: #ecfeff;
+            font-size: 0.8rem;
+            text-decoration: none;
+            box-shadow: 0 18px 35px rgba(14, 165, 233, 0.7);
+        }
+
+        .whatsapp-publish-fab-icon {
+            width: 1.4rem;
+            height: 1.4rem;
+            border-radius: 999px;
+            background: #0369a1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .whatsapp-publish-fab-text {
+            white-space: nowrap;
+        }
+
+
         @media (max-width: 768px) {
             .header-inner {
                 flex-direction: column;
@@ -701,6 +735,10 @@
             .whatsapp-fab-text {
                 display: none;
             }
+            .whatsapp-publish-fab-text {
+                display: none;
+            }
+
         }
     </style>
 </head>
@@ -804,6 +842,16 @@
         <span class="whatsapp-fab-icon">💬</span>
         <span class="whatsapp-fab-text">¿Te interesa una carta? Contáctame</span>
     </a>
+        <!-- Botón flotante para que otros publiquen sus cartas -->
+    <a
+        href="https://wa.me/56990590045?text=Hola%2C%20quiero%20publicar%20mis%20cartas%20en%20tu%20sitio.%20%F0%9F%93%B7%20%0APuedo%20enviarte%20las%20fotos%20por%20aqu%C3%AD%3F"
+        class="whatsapp-publish-fab"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        <span class="whatsapp-publish-fab-icon">📸</span>
+        <span class="whatsapp-publish-fab-text">Publica tus cartas GRATIS en este sitio. Envíame tus fotos por WhatsApp.</span>
+    </a>
 
     <footer>
         <div class="footer-inner">
@@ -816,7 +864,7 @@
 <script>
     const IMAGE_BASE_PATH = "images";
     const PAGE_SIZE = 30;
-    const cardsData = [{"name": "Aeronaut's Wings", "set": "BRO", "lang": "EN", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Valor: CK 750", "priceUsdRef": "0.35", "imageFile": "Aeronaut's Wings - BRO - en - NM - 1.jpg", "copies": [{"imageFile": "Aeronaut's Wings - BRO - en - NM - 1.jpg", "quantity": 1, "lang": "EN", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 500, "set": "BRO", "sellerName": "FrancoArenas", "sellerPhone": "56990590045"}], "seller_name": "FrancoArenas", "seller_phone": "56990590045"}, {"name": "Aerovela néurok", "set": "MRD", "lang": "ES", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Valor: CK 750", "priceUsdRef": "0.35", "imageFile": "Aerovela néurok - - es - NM - 1.jpg", "copies": [{"imageFile": "Aerovela néurok - - es - NM - 1.jpg", "quantity": 1, "lang": "ES", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 500, "set": "MRD", "sellerName": "FrancoArenas", "sellerPhone": "56990590045"}], "seller_name": "FrancoArenas", "seller_phone": "56990590045"}, {"name": "Arco largo viridiano", "set": "AFC", "lang": "ES", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Valor: CK 650", "priceUsdRef": "1.29", "imageFile": "Arco largo viridiano - - es - NM - 1.jpg", "copies": [{"imageFile": "Arco largo viridiano - - es - NM - 1.jpg", "quantity": 1, "lang": "ES", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 968, "set": "AFC", "sellerName": "AngelinaA", "sellerPhone": "5612312312"}], "seller_name": "AngelinaA", "seller_phone": "5612312312"}, {"name": "Jarra de soldadura", "set": "MRD", "lang": "ES", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Valor: CK 650", "priceUsdRef": "1.29", "imageFile": "Jarra de soldadura - - es - NM - 1.jpg", "copies": [{"imageFile": "Jarra de soldadura - - es - NM - 1.jpg", "quantity": 1, "lang": "ES", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 968, "set": "MRD", "sellerName": "AngelinaA", "sellerPhone": "5612312312"}], "seller_name": "AngelinaA", "seller_phone": "5612312312"}, {"name": "Mishra's Bauble", "set": "IMA", "lang": "EN", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Valor: CK 650", "priceUsdRef": "2.79", "imageFile": "Mishra's Bauble - IMA - en - NM - 1.jpg", "copies": [{"imageFile": "Mishra's Bauble - IMA - en - NM - 1.jpg", "quantity": 1, "lang": "EN", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 2092, "set": "IMA", "sellerName": "AngelinaA", "sellerPhone": "5612312312"}], "seller_name": "AngelinaA", "seller_phone": "5612312312"}, {"name": "Ornitóptero", "set": "Varios sets", "lang": "ES", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 2, "price": "Valor: CK 650", "priceUsdRef": "0.49", "imageFile": "Ornitóptero - - es - NM - 1.jpg", "copies": [{"imageFile": "Ornitóptero - - es - NM - 1.jpg", "quantity": 1, "lang": "ES", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 0, "set": "PS11", "sellerName": "AngelinaA", "sellerPhone": "5612312312"}, {"imageFile": "Ornitóptero - DMR - es - NM - 1.jpg", "quantity": 1, "lang": "ES", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 500, "set": "DMR", "sellerName": "AngelinaA", "sellerPhone": "5612312312"}], "seller_name": "AngelinaA", "seller_phone": "5612312312"}, {"name": "Pithing Needle", "set": "MID", "lang": "EN", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Valor: CK 650", "priceUsdRef": "0.59", "imageFile": "Pithing Needle - MID - en - NM - 1.jpg", "copies": [{"imageFile": "Pithing Needle - MID - en - NM - 1.jpg", "quantity": 1, "lang": "EN", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 500, "set": "MID", "sellerName": "AngelinaA", "sellerPhone": "5612312312"}], "seller_name": "AngelinaA", "seller_phone": "5612312312"}, {"name": "Stone of Erech", "set": "LTR", "lang": "EN", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Valor: CK 650", "priceUsdRef": "0.35", "imageFile": "Stone of Erech - LTR - en - NM - 1.jpg", "copies": [{"imageFile": "Stone of Erech - LTR - en - NM - 1.jpg", "quantity": 1, "lang": "EN", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 500, "set": "LTR", "sellerName": "AngelinaA", "sellerPhone": "5612312312"}], "seller_name": "AngelinaA", "seller_phone": "5612312312"}];
+    const cardsData = [{"name": "Mishra's Bauble", "set": "IMA", "lang": "EN", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Valor: CK 750", "priceUsdRef": "2.79", "imageFile": "Mishra's Bauble - IMA - en - NM - 1.jpg", "copies": [{"imageFile": "Mishra's Bauble - IMA - en - NM - 1.jpg", "quantity": 1, "lang": "EN", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 2092, "set": "IMA", "sellerName": "FrancoArenas", "sellerPhone": "56990590045"}], "seller_name": "FrancoArenas", "seller_phone": "56990590045"}];
     const IS_COARSE_POINTER = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
 
     let filteredCards = [...cardsData];
