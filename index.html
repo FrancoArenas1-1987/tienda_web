@@ -810,7 +810,7 @@
 <script>
     const IMAGE_BASE_PATH = "images";
     const PAGE_SIZE = 30;
-    const cardsData = [{"name": "Aeronaut's Wings", "set": "BRO", "lang": "EN", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "$500", "priceUsdRef": "0.08", "imageFile": "Aeronaut's Wings - BRO - en - NM - 1.jpg", "copies": [{"imageFile": "Aeronaut's Wings - BRO - en - NM - 1.jpg", "quantity": 1, "lang": "EN", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 500, "set": "BRO", "sellerName": "FrancoArenas", "sellerPhone": "56990590045"}]}, {"name": "Aerovela néurok", "set": "MRD", "lang": "ES", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Aerovela néurok - - es - NM - 1.jpg", "copies": [{"imageFile": "Aerovela néurok - - es - NM - 1.jpg", "quantity": 1, "lang": "ES", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 0, "set": "MRD", "sellerName": "FrancoArenas", "sellerPhone": "56990590045"}]}];
+    const cardsData = [{"name": "Aeronaut's Wings", "set": "BRO", "lang": "EN", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "$500", "priceUsdRef": "0.08", "imageFile": "Aeronaut's Wings - BRO - en - NM - 1.jpg", "copies": [{"imageFile": "Aeronaut's Wings - BRO - en - NM - 1.jpg", "quantity": 1, "lang": "EN", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 500, "set": "BRO", "sellerName": "FrancoArenas", "sellerPhone": "56990590045"}], "seller_name": "FrancoArenas", "seller_phone": "56990590045"}, {"name": "Aerovela néurok", "set": "MRD", "lang": "ES", "condition": "NM", "isFoil": false, "hasFoil": false, "hasNonFoil": true, "format": "Modern", "quantity": 1, "price": "Consultar", "priceUsdRef": "", "imageFile": "Aerovela néurok - - es - NM - 1.jpg", "copies": [{"imageFile": "Aerovela néurok - - es - NM - 1.jpg", "quantity": 1, "lang": "ES", "condition": "NM", "format": "Modern", "isFoil": false, "priceClp": 0, "set": "MRD", "sellerName": "FrancoArenas", "sellerPhone": "56990590045"}], "seller_name": "FrancoArenas", "seller_phone": "56990590045"}];
     const IS_COARSE_POINTER = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
 
     let filteredCards = [...cardsData];
@@ -1054,6 +1054,36 @@
         }
 
         footer.appendChild(priceBox);
+
+        // Botón de WhatsApp del vendedor en la tarjeta principal
+        if (card.seller_phone) {
+            const waBtn = document.createElement("a");
+            waBtn.className = "qty-pill"; // puedes hacer una clase nueva si quieres
+            waBtn.style.background = "#22c55e";
+            waBtn.style.color = "white";
+            waBtn.style.border = "none";
+            waBtn.style.textDecoration = "none";
+            waBtn.style.display = "inline-flex";
+            waBtn.style.alignItems = "center";
+            waBtn.style.gap = "0.25rem";
+
+            const msg = encodeURIComponent("Hola, vi tu carta " + card.name + " en la tienda y me interesa.");
+            waBtn.href = "https://wa.me/" + card.seller_phone + "?text=" + msg;
+            waBtn.target = "_blank";
+
+            const icon = document.createElement("span");
+            icon.textContent = "💬";
+            waBtn.appendChild(icon);
+
+            const txt = document.createElement("span");
+            txt.textContent = "WhatsApp";
+            waBtn.appendChild(txt);
+
+            footer.appendChild(waBtn);
+        }
+
+
+
 
         const qtyButton = document.createElement("button");
         qtyButton.type = "button";
