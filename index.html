@@ -1105,52 +1105,6 @@
         body.appendChild(footer);
 
 
-        // ---- Acciones (WhatsApp + Ver stock) a la derecha
-        const actions = document.createElement("div");
-        actions.className = "card-footer-actions";
-
-        // Botón WhatsApp (usa lo que ya tenías, solo cambia el parent)
-        if (card.seller_phone) {
-            const waBtn = document.createElement("a");
-            waBtn.className = "qty-pill";
-            waBtn.style.background = "#22c55e";
-            waBtn.style.color = "white";
-            waBtn.style.border = "none";
-            waBtn.style.textDecoration = "none";
-            waBtn.style.display = "inline-flex";
-            waBtn.style.alignItems = "center";
-            waBtn.style.gap = "0.25rem";
-
-            const msg = encodeURIComponent(
-                "Hola, vi tu carta " + card.name + " en la tienda y me interesa."
-            );
-            waBtn.href = "https://wa.me/" + card.seller_phone + "?text=" + msg;
-            waBtn.target = "_blank";
-
-            const icon = document.createElement("span");
-            icon.textContent = "💬";
-            waBtn.appendChild(icon);
-
-            const txt = document.createElement("span");
-            txt.textContent = "WhatsApp";
-            waBtn.appendChild(txt);
-
-            actions.appendChild(waBtn);
-        }
-
-        // Botón "Ver stock (n)"
-        const qtyButton = document.createElement("button");
-        qtyButton.type = "button";
-        qtyButton.className = "qty-pill";
-        qtyButton.textContent = "Ver stock (" + (card.quantity || 1) + ")";
-        qtyButton.addEventListener("click", (event) => {
-            event.stopPropagation();
-            openCopiesModal(card);
-        });
-        actions.appendChild(qtyButton);
-
-        footer.appendChild(actions);
-        body.appendChild(footer);
 
 
         article.appendChild(imageWrapper);
