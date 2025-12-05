@@ -360,10 +360,10 @@
 
         .card-footer {
             display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-top: 0.3rem;
-            gap: 0.5rem; /* NUEVO: separación general */
+            flex-direction: column;   /* 👈 ahora los hijos van uno bajo otro */
+            align-items: flex-start;
+            margin-top: 0.35rem;
+            gap: 0.25rem;   
         }
         .card-footer-actions {
             display: flex;
@@ -1043,20 +1043,67 @@
 
         body.appendChild(tags);
 
-                const footer = document.createElement("div");
+        // ----- Footer en 3 filas: precio / Ver stock / WhatsApp
+        const footer = document.createElement("div");
         footer.className = "card-footer";
 
-        // ---- Precio a la izquierda
+        // Fila 1: precio (CK 750 o $XXX)
         const priceBox = document.createElement("div");
         const priceMain = document.createElement("div");
         priceMain.className = "price-main";
-        // card.price ya viene formateado o con el texto del .env
-        priceMain.textContent = card.price;
+        priceMain.textContent = card.price;   // ya viene con "CK 750" si aplica
         priceBox.appendChild(priceMain);
 
-        
-
+        if (card.priceUsdRef) {
+            const priceRef = document.createElement("div");
+            priceRef.className = "price-ref";
+            priceRef.textContent = "Ref: USD " + card.priceUsdRef;
+            priceBox.appendChild(priceRef);
+        }
         footer.appendChild(priceBox);
+
+        // Fila 2: botón Ver stock
+        const qtyButton = document.createElement("button");
+        qtyButton.type = "button";
+        qtyButton.className = "qty-pill";
+        qtyButton.textContent = "Ver stock (" + (card.quantity || 1) + ")";
+        qtyButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            openCopiesModal(card);
+        });
+        footer.appendChild(qtyButton);
+
+        // Fila 3: botón WhatsApp (solo si hay teléfono)
+        if (card.seller_phone) {
+            const waBtn = document.createElement("a");
+            waBtn.className = "qty-pill";
+            waBtn.style.background = "#22c55e";
+            waBtn.style.color = "white";
+            waBtn.style.border = "none";
+            waBtn.style.textDecoration = "none";
+            waBtn.style.display = "inline-flex";
+            waBtn.style.alignItems = "center";
+            waBtn.style.gap = "0.25rem";
+
+            const msg = encodeURIComponent(
+                "Hola, vi tu carta " + card.name + " en la tienda y me interesa."
+            );
+            waBtn.href = "https://wa.me/" + card.seller_phone + "?text=" + msg;
+            waBtn.target = "_blank";
+
+            const icon = document.createElement("span");
+            icon.textContent = "💬";
+            waBtn.appendChild(icon);
+
+            const txt = document.createElement("span");
+            txt.textContent = "WhatsApp";
+            waBtn.appendChild(txt);
+
+            footer.appendChild(waBtn);
+        }
+
+        body.appendChild(footer);
+
 
         // ---- Acciones (WhatsApp + Ver stock) a la derecha
         const actions = document.createElement("div");
