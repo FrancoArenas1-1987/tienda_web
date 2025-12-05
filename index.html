@@ -1113,12 +1113,20 @@
         const qtyButton = document.createElement("button");
         qtyButton.type = "button";
         qtyButton.className = "qty-pill";
-        qtyButton.textContent = "Ver stock (" + (card.quantity || 1) + ")";
+
+        // usamos la cantidad de copias reales si existe, si no, caemos a quantity
+        const copiesCount = (Array.isArray(card.copies) && card.copies.length > 0)
+            ? card.copies.length
+            : (card.quantity || 1);
+
+        qtyButton.textContent = "Ver stock (" + copiesCount + ")";
+
         qtyButton.addEventListener("click", (event) => {
             event.stopPropagation();
             openCopiesModal(card);
         });
         footer.appendChild(qtyButton);
+
 
         // Fila 3: botón WhatsApp (solo si hay teléfono)
         if (card.seller_phone) {
