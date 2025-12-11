@@ -557,6 +557,52 @@
             margin: 0.25rem 0 0.25rem 1.1rem;
         }
 
+        /* --- PREMIUM PLAN CARDS --- */
+
+        .plan-card {
+            background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(96,165,250,0.15));
+            border: 1px solid rgba(147,197,253,0.45);
+            border-radius: 14px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 28px rgba(59,130,246,0.15);
+            backdrop-filter: blur(6px);
+            transition: 0.25s ease;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(96,165,250,0.35);
+            border-color: rgba(191,219,254,0.9);
+        }
+
+        .plan-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #e0f2fe;
+            margin-bottom: 0.4rem;
+        }
+
+        .plan-desc {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-bottom: 0.8rem;
+        }
+
+        .plan-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #93c5fd;
+        }
+
+        .plan-icon {
+            font-size: 1.4rem;
+            margin-right: 0.4rem;
+            color: #60a5fa;
+        }
+
+
+
         .vendor-modal-close {
             background: transparent;
             border: none;
@@ -809,6 +855,11 @@
                 transform: translateY(0) scale(1);
             }
         }
+
+        @keyframes vendorSlideDown {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(100%); opacity: 0; }
+}
 
 
         .copies-modal-qty {
@@ -1070,38 +1121,51 @@
       <!-- Planes -->
       <section>
         <h3>Planes para vendedores</h3>
-
-        <div class="vendor-plans-grid">
-          <div class="vendor-plan-card">
-            <h4>Plan Starter</h4>
-            <p class="vendor-plan-price">$2.500 / mes</p>
+        <div class="plan-card">
+        <div class="plan-title">
+            <span class="plan-icon">🚀</span>
+            Plan Starter
+        </div>
+        <div class="plan-desc">
             <ul>
               <li>Hasta <strong>300 imágenes</strong> procesadas por IA.</li>
               <li>Ideal para vender carpeta o lote chico.</li>
               <li>Te olvidas de rehacer posts todas las semanas.</li>
             </ul>
-          </div>
+        </div>
+        <div class="plan-price">$2.500 / mes</div>
+        </div>
 
-          <div class="vendor-plan-card">
-            <h4>Plan Trader</h4>
-            <p class="vendor-plan-price">$5.000 / mes</p>
-            <ul>
-              <li>Hasta <strong>1.500 imágenes</strong> procesadas por IA.</li>
-              <li>Perfecto si vendes cartas todas las semanas.</li>
-              <li>Rotas stock sin tener que rearmar publicaciones.</li>
-            </ul>
-          </div>
+        <div class="plan-card">
+            <div class="plan-title">
+                <span class="plan-icon">🔥</span>
+                Plan Trader
+            </div>
+            <div class="plan-desc">
+                <ul>
+                <li>Hasta <strong>1.500 imágenes</strong> procesadas por IA.</li>
+                <li>Perfecto si vendes cartas todas las semanas.</li>
+                <li>Rotas stock sin tener que rearmar publicaciones.</li>
+                </ul>
+            </div>
+            <div class="plan-price">$4.990 CLP / mes</div>
+        </div>
 
-          <div class="vendor-plan-card">
-            <h4>Plan Grinder</h4>
-            <p class="vendor-plan-price">$8.000 / mes</p>
+        <div class="plan-card">
+            <div class="plan-title">
+                <span class="plan-icon">💎</span>
+                Plan Profesional
+            </div>
+            <div class="plan-desc">
             <ul>
               <li>Hasta <strong>3.000 imágenes</strong> procesadas por IA.</li>
               <li>Para coleccionistas grandes o vendedores fuertes.</li>
               <li>Soporte prioritario y ayuda para optimizar tu catálogo.</li>
-            </ul>
-          </div>
+            </ul>    
+            </div>
+            <div class="plan-price">$9.990 CLP / mes</div>
         </div>
+
 
         <div class="vendor-launch-note">
           <p><strong>🚀 Lanzamiento para la comunidad de Magic Concepción</strong></p>
@@ -1681,19 +1745,22 @@
     }
 
     function closeVendorInfoModal() {
-        const modal = document.getElementById("vendor-info-modal");
-        if (!modal) return;
+    const modal = document.getElementById("vendor-info-modal");
+    const dialog = document.querySelector(".vendor-modal-dialog");
 
-        // Quitamos .flex para que las propiedades (opacity/transform) vuelvan
-        // a su estado inicial y se anime el cierre
+    // Animación de salida
+    dialog.style.animation = "vendorSlideDown 0.28s ease-in forwards";
+
+    // Esperar la animación antes de ocultar
+    setTimeout(() => {
         modal.classList.remove("flex");
+        modal.classList.add("hidden");
 
-        // Esperamos a que termine la transición (~220ms) y recién ahí
-        // aplicamos .hidden para que no reciba clics/tab foco
-        setTimeout(() => {
-            modal.classList.add("hidden");
-        }, 230);
-    }
+        // Restablecer animación de entrada para la próxima vez
+        dialog.style.animation = "vendorSlideUpBounce 0.45s cubic-bezier(.22,1.28,.57,1) forwards";
+    }, 280);
+}
+
 
 
     // Cerrar al clickear fuera del contenido
