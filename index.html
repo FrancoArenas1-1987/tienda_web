@@ -742,14 +742,162 @@
         }
     </style>
 </head>
+
+
 <body>
+<!-- Modal: Información para vendedores (con IA) -->
+<div id="vendor-info-modal"
+     class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm">
+  <div class="max-w-3xl w-[95%] bg-zinc-900 text-zinc-100 rounded-xl shadow-2xl border border-zinc-700 relative">
+    <!-- Header -->
+    <div class="flex items-start justify-between px-6 py-4 border-b border-zinc-700">
+      <div>
+        <h2 class="text-xl font-semibold">
+          ¿Quieres publicar tus cartas en la vitrina (con IA)?
+        </h2>
+        <p class="text-sm text-zinc-400 mt-1">
+          Ahorra tiempo, ordena tu colección y deja que la inteligencia artificial haga la pega fome por ti.
+        </p>
+      </div>
+      <button type="button"
+              class="text-zinc-400 hover:text-zinc-100 text-2xl leading-none"
+              onclick="closeVendorInfoModal()">
+        ×
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="px-6 py-4 space-y-5 max-h-[70vh] overflow-y-auto text-sm leading-relaxed">
+      <!-- Dolor actual -->
+      <section>
+        <h3 class="font-semibold mb-1 text-zinc-100">El problema de publicar en Facebook</h3>
+        <p class="text-zinc-300">
+          Como jugadores de Magic sabemos lo que es una <span class="font-semibold">paja</span> publicar cartas:
+        </p>
+        <ul class="list-disc list-inside text-zinc-300 mt-1 space-y-1">
+          <li>Sacas fotos en <span class="font-semibold">bloques</span> (hojas, pilas, la mesa llena).</li>
+          <li>Subes las fotos al grupo y escribes el típico “CK 750” o “2 lucas cada una”.</li>
+          <li>Tienes que editar el post cuando se venden cartas, volver a publicar, repetir todo.</li>
+        </ul>
+        <p class="text-zinc-300 mt-2">
+          Terminas gastando más tiempo en <span class="font-semibold">postear</span> que en jugar o negociar.
+        </p>
+      </section>
+
+      <!-- Cómo funciona la vitrina con IA -->
+      <section>
+        <h3 class="font-semibold mb-1 text-zinc-100">Cómo funciona la vitrina de Magic Concepción (potenciada con IA)</h3>
+        <ol class="list-decimal list-inside text-zinc-300 mt-1 space-y-1">
+          <li>Subes tus fotos de cartas en <span class="font-semibold">bloques</span> a una carpeta compartida (Google Drive u otra).</li>
+          <li>La plataforma usa un <span class="font-semibold">modelo de inteligencia artificial</span>
+              entrenado para leer las cartas: nombre, edición, idioma, foil, etc.</li>
+          <li>Con eso se genera un catálogo ordenado:
+            <span class="font-semibold">buscable y filtrable</span> por nombre, edición, idioma, foil, formato, etc.
+          </li>
+          <li>Cada carta queda con un botón de <span class="font-semibold">WhatsApp directo hacia ti</span>,
+              para que negocies sin intermediarios ni comisiones.</li>
+        </ol>
+        <p class="text-zinc-300 mt-2">
+          Además, el sitio completo se publica regularmente en el grupo
+          <span class="font-semibold">Magic Concepción</span> como aporte a la comunidad,
+          para que todos tengamos una vitrina decente sin sufrir con los posts.
+        </p>
+      </section>
+
+      <!-- Beneficio -->
+      <section>
+        <h3 class="font-semibold mb-1 text-zinc-100">Qué ganas tú</h3>
+        <ul class="list-disc list-inside text-zinc-300 mt-1 space-y-1">
+          <li><span class="font-semibold">Tiempo</span>: la IA hace el trabajo fome de ordenar y etiquetar.</li>
+          <li><span class="font-semibold">Tranquilidad</span>: tu stock está en una vitrina 24/7, no perdido en el feed.</li>
+          <li><span class="font-semibold">Visibilidad</span>: todo el sitio se comparte en el grupo, no solo tu post.</li>
+        </ul>
+      </section>
+
+      <!-- Planes -->
+      <section>
+        <h3 class="font-semibold mb-2 text-zinc-100">Planes para vendedores</h3>
+
+        <div class="grid gap-3 md:grid-cols-3 text-xs md:text-sm">
+          <!-- Starter -->
+          <div class="rounded-lg border border-zinc-700 bg-zinc-950/60 p-3 flex flex-col">
+            <h4 class="font-semibold text-green-400 mb-1">Plan Starter</h4>
+            <p class="text-zinc-300 font-semibold">$2.500 / mes</p>
+            <ul class="mt-2 space-y-1 text-zinc-300">
+              <li>Hasta <span class="font-semibold">300 imágenes</span> procesadas por IA.</li>
+              <li>Ideal para vender carpeta o lote chico.</li>
+              <li>Te olvidas de rehacer posts todas las semanas.</li>
+            </ul>
+          </div>
+
+          <!-- Trader -->
+          <div class="rounded-lg border border-zinc-700 bg-zinc-950/80 p-3 flex flex-col">
+            <h4 class="font-semibold text-blue-400 mb-1">Plan Trader</h4>
+            <p class="text-zinc-300 font-semibold">$5.000 / mes</p>
+            <ul class="mt-2 space-y-1 text-zinc-300">
+              <li>Hasta <span class="font-semibold">1.500 imágenes</span> procesadas por IA.</li>
+              <li>Perfecto si vendes cartas todas las semanas.</li>
+              <li>Rotas stock sin tener que rearmar publicaciones.</li>
+            </ul>
+          </div>
+
+          <!-- Grinder -->
+          <div class="rounded-lg border border-zinc-700 bg-zinc-950/60 p-3 flex flex-col">
+            <h4 class="font-semibold text-purple-400 mb-1">Plan Grinder</h4>
+            <p class="text-zinc-300 font-semibold">$8.000 / mes</p>
+            <ul class="mt-2 space-y-1 text-zinc-300">
+              <li>Hasta <span class="font-semibold">3.000 imágenes</span> procesadas por IA.</li>
+              <li>Para coleccionistas grandes o vendedores fuertes.</li>
+              <li>Soporte prioritario y ayuda para optimizar tu catálogo.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Lanzamiento -->
+        <div class="mt-3 p-3 rounded-lg bg-emerald-900/40 border border-emerald-600/60">
+          <p class="font-semibold text-emerald-300 text-sm">
+            🚀 Lanzamiento para la comunidad de Magic Concepción
+          </p>
+          <p class="text-zinc-200 mt-1">
+            Los <span class="font-semibold">primeros 10 vendedores</span> tienen el plan completo
+            <span class="font-semibold">GRATIS por 3 meses</span>, hasta 500 imágenes procesadas con IA,
+            mientras afinamos la plataforma con su feedback.
+          </p>
+        </div>
+      </section>
+
+      <!-- Call to action -->
+      <section>
+        <h3 class="font-semibold mb-1 text-zinc-100">¿Te interesa publicar tus cartas con IA?</h3>
+        <p class="text-zinc-300">
+          Escríbeme por WhatsApp y armamos tu carpeta compartida para subir tus fotos en bloques.  
+          Tú subes las fotos, la inteligencia artificial se encarga del resto.
+        </p>
+        <div class="mt-3 flex flex-wrap gap-2 items-center">
+          <a href="https://wa.me/56990590045?text=Hola%2C%20quiero%20publicar%20mis%20cartas%20en%20la%20vitrina%20de%20Magic%20Concepci%C3%B3n%20con%20IA.%20%C2%BFC%C3%B3mo%20parto%3F"
+             target="_blank"
+             rel="noopener"
+             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-900 font-semibold text-sm">
+            <span>Hablar por WhatsApp</span>
+          </a>
+          <button type="button"
+                  class="text-xs text-zinc-400 hover:text-zinc-200"
+                  onclick="closeVendorInfoModal()">
+            Más tarde, solo quiero seguir viendo cartas
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
 <div class="page-shell">
     <header>
         <div class="header-inner">
             <div class="brand">
                 <div class="brand-icon">M</div>
                 <div class="brand-text-wrapper">
-                    <div class="brand-text-main">El Castillo Magic</div>
+                    <div class="brand-text-main">La Comunidad del Magic</div>
                     <div class="brand-text-sub">Catálogo de cartas individuales · Chile</div>
                 </div>
             </div>
@@ -840,23 +988,26 @@
         rel="noopener noreferrer"
     >
         <span class="whatsapp-fab-icon">💬</span>
-        <span class="whatsapp-fab-text">¿Te interesa una carta? Contáctame</span>
+        <span class="whatsapp-fab-text">¿Te interesa una carta? Háblame por WhatsApp</span>
     </a>
-        <!-- Botón flotante para que otros publiquen sus cartas -->
-    <a
-        href="https://wa.me/56990590045?text=Hola%2C%20quiero%20publicar%20mis%20cartas%20en%20tu%20sitio.%20%F0%9F%93%B7%20%0APuedo%20enviarte%20las%20fotos%20por%20aqu%C3%AD%3F"
-        class="whatsapp-publish-fab"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        <span class="whatsapp-publish-fab-icon">📸</span>
-        <span class="whatsapp-publish-fab-text">Publica tus cartas en este sitio, sin la lata de tener que agregar cada una una de ellas. Te explico por whatsapp, Contactame !.</span>
-    </a>
+
+      <!-- Botón flotante para que otros publiquen sus cartas (abre modal con IA) -->
+        <button
+            type="button"
+            class="whatsapp-publish-fab"
+            onclick="openVendorInfoModal()"
+        >
+            <span class="whatsapp-publish-fab-icon">📸</span>
+            <span class="whatsapp-publish-fab-text">
+                Publicar mis cartas con IA
+            </span>
+        </button>
+
 
     <footer>
         <div class="footer-inner">
             <span>Generado automáticamente desde inventario_cartas.csv.</span>
-            <span>El Castillo Magic &copy; 2025</span>
+            <span>La Comunidad del Magic &copy; 2025</span>
         </div>
     </footer>
 </div>
@@ -1065,7 +1216,8 @@
             waBtn.appendChild(icon);
 
             const txt = document.createElement("span");
-            txt.textContent = "WhatsApp";
+            txt.textContent = "Hablar por WhatsApp";
+
             waBtn.appendChild(txt);
 
             footer.appendChild(waBtn);
@@ -1262,6 +1414,41 @@
         currentPage = 1;
         renderCards();
     }
+    // --- Modal "¿Quieres publicar tus cartas?" ---
+
+    function openVendorInfoModal() {
+    const modal = document.getElementById("vendor-info-modal");
+    if (!modal) return;
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+    }
+
+    function closeVendorInfoModal() {
+    const modal = document.getElementById("vendor-info-modal");
+    if (!modal) return;
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+    }
+
+    // Cerrar al clickear fuera del contenido
+    document.addEventListener("click", function (e) {
+    const modal = document.getElementById("vendor-info-modal");
+    if (!modal) return;
+    if (!modal.classList.contains("flex")) return;
+
+    // si el click fue directamente sobre el backdrop (no sobre el contenido)
+    if (e.target === modal) {
+        closeVendorInfoModal();
+    }
+    });
+
+    // Cerrar con ESC
+    document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+        closeVendorInfoModal();
+    }
+    });
+
 
     document.addEventListener("DOMContentLoaded", init);
 </script>
