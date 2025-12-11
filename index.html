@@ -473,10 +473,20 @@
             position: fixed;
             inset: 0;
             z-index: 900;
+            /* OJO: aquí NO debe ir display:none; eso lo maneja la clase .hidden */
             justify-content: center;
             align-items: center;
             padding: 1.2rem;
             background: rgba(15, 23, 42, 0.88);
+
+            /* Animación suave del fondo (fade) */
+            opacity: 0;
+            transition: opacity 0.22s ease-out;
+        }
+
+        /* Cuando el modal está "abierto" (tiene la clase .flex) */
+        #vendor-info-modal.flex {
+            opacity: 1;
         }
 
         .vendor-modal-dialog {
@@ -492,7 +502,21 @@
             flex-direction: column;
             gap: 0.75rem;
             overflow-y: auto;
+
+            /* Estado inicial: un poquito abajo y más chico */
+            transform: translateY(12px) scale(0.97);
+            opacity: 0;
+            transition:
+                transform 0.24s ease-out,
+                opacity 0.24s ease-out;
         }
+
+        /* Cuando el modal está visible, animamos a tamaño normal */
+        #vendor-info-modal.flex .vendor-modal-dialog {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
 
         .vendor-modal-header {
             display: flex;
@@ -928,7 +952,7 @@
       <section>
         <h3>El problema de publicar en Facebook</h3>
         <p>
-          Como jugadores de Magic sabemos lo que es una <strong>paja</strong> publicar cartas:
+          Como jugadores de Magic sabemos lo que es una <strong>LATA</strong> publicar cartas:
         </p>
         <ul>
           <li>Sacas fotos en <strong>bloques</strong> (hojas, pilas, la mesa llena).</li>
@@ -946,11 +970,11 @@
         <ol>
           <li>
             Tomas fotos de tus cartas <strong>una por una</strong> (una carta por foto) y las subes
-            a una carpeta compartida (Google Drive u otra).
+            a una carpeta que te indicaremos.
           </li>
           <li>
             La plataforma usa un <strong>modelo de inteligencia artificial</strong> entrenado para leer las cartas:
-            nombre, edición, idioma, foil, etc.
+            nombre, edición, idioma etc.
           </li>
           <li>
             Con eso se genera un catálogo ordenado, <strong>buscable y filtrable</strong> por nombre,
@@ -1027,8 +1051,8 @@
       <section>
         <h3>¿Te interesa publicar tus cartas con IA?</h3>
         <p>
-          Escríbeme por WhatsApp y armamos tu carpeta compartida para subir las fotos de tus cartas
-          (<strong>una carta por foto</strong>). Tú subes las fotos, la inteligencia artificial se encarga del resto.
+          Escríbeme por WhatsApp y armamos tu carpeta  para subir las fotos de tus cartas. 
+          Tú subes las fotos, la inteligencia artificial se encarga del resto.
         </p>
         <div class="vendor-modal-actions">
           <a href="https://wa.me/56990590045?text=Hola%2C%20quiero%20publicar%20mis%20cartas%20en%20la%20vitrina%20de%20Magic%20Concepci%C3%B3n%20con%20IA.%20%C2%BFC%C3%B3mo%20parto%3F"
@@ -1573,19 +1597,38 @@
     }
     // --- Modal "¿Quieres publicar tus cartas?" ---
 
+    // --- Modal "¿Quieres publicar tus cartas?" ---
+
     function openVendorInfoModal() {
-    const modal = document.getElementById("vendor-info-modal");
-    if (!modal) return;
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
+        const modal = document.getElementById("vendor-info-modal");
+        if (!modal) return;
+
+        // Primero nos aseguramos de que no esté display:none
+        modal.classList.remove("hidden");
+
+        // Forzamos un reflow para que el navegador "registre" el estado inicial
+        // antes de aplicar la clase .flex (esto hace que la transición se vea bien)
+        void modal.offsetWidth;
+
+        // Ahora sí, mostramos y activamos las transiciones (opacity + transform)
+        modal.classList.add("flex");
     }
 
     function closeVendorInfoModal() {
-    const modal = document.getElementById("vendor-info-modal");
-    if (!modal) return;
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
+        const modal = document.getElementById("vendor-info-modal");
+        if (!modal) return;
+
+        // Quitamos .flex para que las propiedades (opacity/transform) vuelvan
+        // a su estado inicial y se anime el cierre
+        modal.classList.remove("flex");
+
+        // Esperamos a que termine la transición (~220ms) y recién ahí
+        // aplicamos .hidden para que no reciba clics/tab foco
+        setTimeout(() => {
+            modal.classList.add("hidden");
+        }, 230);
     }
+
 
     // Cerrar al clickear fuera del contenido
     document.addEventListener("click", function (e) {
