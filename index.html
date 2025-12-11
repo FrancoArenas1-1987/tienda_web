@@ -458,6 +458,168 @@
             color: var(--text-muted);
         }
 
+        
+                /* ===== MODAL INFORMACIÓN VENDEDORES (IA) ===== */
+
+        .hidden {
+            display: none;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        #vendor-info-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            display: none; /* se mostrará al agregar la clase .flex desde JS */
+            justify-content: center;
+            align-items: center;
+            padding: 1.2rem;
+            background: rgba(15, 23, 42, 0.88);
+        }
+
+        .vendor-modal-dialog {
+            max-width: 960px;
+            width: 100%;
+            max-height: 90vh;
+            background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.97));
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.9);
+            padding: 1rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            overflow-y: auto;
+        }
+
+        .vendor-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .vendor-modal-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .vendor-modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .vendor-modal-body section h3 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-main);
+        }
+
+        .vendor-modal-body ul,
+        .vendor-modal-body ol {
+            margin: 0.25rem 0 0.25rem 1.1rem;
+        }
+
+        .vendor-modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .vendor-plans-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.6rem;
+            margin-top: 0.4rem;
+        }
+
+        .vendor-plan-card {
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.7rem;
+        }
+
+        .vendor-plan-card h4 {
+            margin: 0 0 0.2rem 0;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .vendor-plan-price {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .vendor-launch-note {
+            margin-top: 0.6rem;
+            padding: 0.6rem;
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            font-size: 0.85rem;
+        }
+
+        .vendor-modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .vendor-modal-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1.1rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            text-decoration: none;
+            cursor: pointer;
+            background: var(--accent);
+            color: #020617;
+        }
+
+        .vendor-modal-secondary {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .vendor-plans-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            #vendor-info-modal {
+                padding: 0.75rem;
+            }
+
+            .vendor-modal-dialog {
+                border-radius: 14px;
+                padding: 0.75rem;
+            }
+        }
+
         /* ===== MODAL GRANDE DE COPIAS ===== */
 
         .copies-modal {
@@ -746,121 +908,117 @@
 
 <body>
 <!-- Modal: Información para vendedores (con IA) -->
-<div id="vendor-info-modal"
-     class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm">
-  <div class="max-w-3xl w-[95%] bg-zinc-900 text-zinc-100 rounded-xl shadow-2xl border border-zinc-700 relative">
-    <!-- Header -->
-    <div class="flex items-start justify-between px-6 py-4 border-b border-zinc-700">
+<div id="vendor-info-modal" class="hidden">
+  <div class="vendor-modal-dialog">
+    <div class="vendor-modal-header">
       <div>
-        <h2 class="text-xl font-semibold">
-          ¿Quieres publicar tus cartas en la vitrina (con IA)?
-        </h2>
-        <p class="text-sm text-zinc-400 mt-1">
+        <h2>¿Quieres publicar tus cartas en la vitrina (con IA)?</h2>
+        <p class="vendor-modal-subtitle">
           Ahorra tiempo, ordena tu colección y deja que la inteligencia artificial haga la pega fome por ti.
         </p>
       </div>
       <button type="button"
-              class="text-zinc-400 hover:text-zinc-100 text-2xl leading-none"
+              class="vendor-modal-close"
               onclick="closeVendorInfoModal()">
         ×
       </button>
     </div>
 
-    <!-- Body -->
-    <div class="px-6 py-4 space-y-5 max-h-[70vh] overflow-y-auto text-sm leading-relaxed">
+    <div class="vendor-modal-body">
       <!-- Dolor actual -->
       <section>
-        <h3 class="font-semibold mb-1 text-zinc-100">El problema de publicar en Facebook</h3>
-        <p class="text-zinc-300">
-          Como jugadores de Magic sabemos lo que es una <span class="font-semibold">paja</span> publicar cartas:
+        <h3>El problema de publicar en Facebook</h3>
+        <p>
+          Como jugadores de Magic sabemos lo que es una <strong>paja</strong> publicar cartas:
         </p>
-        <ul class="list-disc list-inside text-zinc-300 mt-1 space-y-1">
-          <li>Sacas fotos en <span class="font-semibold">bloques</span> (hojas, pilas, la mesa llena).</li>
+        <ul>
+          <li>Sacas fotos en <strong>bloques</strong> (hojas, pilas, la mesa llena).</li>
           <li>Subes las fotos al grupo y escribes el típico “CK 750” o “2 lucas cada una”.</li>
           <li>Tienes que editar el post cuando se venden cartas, volver a publicar, repetir todo.</li>
         </ul>
-        <p class="text-zinc-300 mt-2">
-          Terminas gastando más tiempo en <span class="font-semibold">postear</span> que en jugar o negociar.
+        <p>
+          Terminas gastando más tiempo en <strong>postear</strong> que en jugar o negociar.
         </p>
       </section>
 
-      <!-- Cómo funciona la vitrina con IA -->
+      <!-- Cómo funciona la vitrina -->
       <section>
-        <h3 class="font-semibold mb-1 text-zinc-100">Cómo funciona la vitrina de Magic Concepción (potenciada con IA)</h3>
-        <ol class="list-decimal list-inside text-zinc-300 mt-1 space-y-1">
-          <li>Subes tus fotos de cartas en <span class="font-semibold">bloques</span> a una carpeta compartida (Google Drive u otra).</li>
-          <li>La plataforma usa un <span class="font-semibold">modelo de inteligencia artificial</span>
-              entrenado para leer las cartas: nombre, edición, idioma, foil, etc.</li>
-          <li>Con eso se genera un catálogo ordenado:
-            <span class="font-semibold">buscable y filtrable</span> por nombre, edición, idioma, foil, formato, etc.
+        <h3>Cómo funciona la vitrina de Magic Concepción (potenciada con IA)</h3>
+        <ol>
+          <li>
+            Tomas fotos de tus cartas <strong>una por una</strong> (una carta por foto) y las subes
+            a una carpeta compartida (Google Drive u otra).
           </li>
-          <li>Cada carta queda con un botón de <span class="font-semibold">WhatsApp directo hacia ti</span>,
-              para que negocies sin intermediarios ni comisiones.</li>
+          <li>
+            La plataforma usa un <strong>modelo de inteligencia artificial</strong> entrenado para leer las cartas:
+            nombre, edición, idioma, foil, etc.
+          </li>
+          <li>
+            Con eso se genera un catálogo ordenado, <strong>buscable y filtrable</strong> por nombre,
+            edición, idioma, foil, formato, etc.
+          </li>
+          <li>
+            Cada carta queda con un botón de <strong>WhatsApp directo hacia ti</strong>,
+            para que negocies sin intermediarios ni comisiones.
+          </li>
         </ol>
-        <p class="text-zinc-300 mt-2">
-          Además, el sitio completo se publica regularmente en el grupo
-          <span class="font-semibold">Magic Concepción</span> como aporte a la comunidad,
-          para que todos tengamos una vitrina decente sin sufrir con los posts.
+        <p>
+          Además, el sitio completo se publica regularmente en el grupo <strong>Magic Concepción</strong>
+          como aporte a la comunidad, para que todos tengamos una vitrina decente sin sufrir con los posts.
         </p>
       </section>
 
-      <!-- Beneficio -->
+      <!-- Beneficios -->
       <section>
-        <h3 class="font-semibold mb-1 text-zinc-100">Qué ganas tú</h3>
-        <ul class="list-disc list-inside text-zinc-300 mt-1 space-y-1">
-          <li><span class="font-semibold">Tiempo</span>: la IA hace el trabajo fome de ordenar y etiquetar.</li>
-          <li><span class="font-semibold">Tranquilidad</span>: tu stock está en una vitrina 24/7, no perdido en el feed.</li>
-          <li><span class="font-semibold">Visibilidad</span>: todo el sitio se comparte en el grupo, no solo tu post.</li>
+        <h3>Qué ganas tú</h3>
+        <ul>
+          <li><strong>Tiempo</strong>: la IA hace el trabajo fome de ordenar y etiquetar.</li>
+          <li><strong>Tranquilidad</strong>: tu stock está en una vitrina 24/7, no perdido en el feed.</li>
+          <li><strong>Visibilidad</strong>: todo el sitio se comparte en el grupo, no solo tu post.</li>
         </ul>
       </section>
 
       <!-- Planes -->
       <section>
-        <h3 class="font-semibold mb-2 text-zinc-100">Planes para vendedores</h3>
+        <h3>Planes para vendedores</h3>
 
-        <div class="grid gap-3 md:grid-cols-3 text-xs md:text-sm">
-          <!-- Starter -->
-          <div class="rounded-lg border border-zinc-700 bg-zinc-950/60 p-3 flex flex-col">
-            <h4 class="font-semibold text-green-400 mb-1">Plan Starter</h4>
-            <p class="text-zinc-300 font-semibold">$2.500 / mes</p>
-            <ul class="mt-2 space-y-1 text-zinc-300">
-              <li>Hasta <span class="font-semibold">300 imágenes</span> procesadas por IA.</li>
+        <div class="vendor-plans-grid">
+          <div class="vendor-plan-card">
+            <h4>Plan Starter</h4>
+            <p class="vendor-plan-price">$2.500 / mes</p>
+            <ul>
+              <li>Hasta <strong>300 imágenes</strong> procesadas por IA.</li>
               <li>Ideal para vender carpeta o lote chico.</li>
               <li>Te olvidas de rehacer posts todas las semanas.</li>
             </ul>
           </div>
 
-          <!-- Trader -->
-          <div class="rounded-lg border border-zinc-700 bg-zinc-950/80 p-3 flex flex-col">
-            <h4 class="font-semibold text-blue-400 mb-1">Plan Trader</h4>
-            <p class="text-zinc-300 font-semibold">$5.000 / mes</p>
-            <ul class="mt-2 space-y-1 text-zinc-300">
-              <li>Hasta <span class="font-semibold">1.500 imágenes</span> procesadas por IA.</li>
+          <div class="vendor-plan-card">
+            <h4>Plan Trader</h4>
+            <p class="vendor-plan-price">$5.000 / mes</p>
+            <ul>
+              <li>Hasta <strong>1.500 imágenes</strong> procesadas por IA.</li>
               <li>Perfecto si vendes cartas todas las semanas.</li>
               <li>Rotas stock sin tener que rearmar publicaciones.</li>
             </ul>
           </div>
 
-          <!-- Grinder -->
-          <div class="rounded-lg border border-zinc-700 bg-zinc-950/60 p-3 flex flex-col">
-            <h4 class="font-semibold text-purple-400 mb-1">Plan Grinder</h4>
-            <p class="text-zinc-300 font-semibold">$8.000 / mes</p>
-            <ul class="mt-2 space-y-1 text-zinc-300">
-              <li>Hasta <span class="font-semibold">3.000 imágenes</span> procesadas por IA.</li>
+          <div class="vendor-plan-card">
+            <h4>Plan Grinder</h4>
+            <p class="vendor-plan-price">$8.000 / mes</p>
+            <ul>
+              <li>Hasta <strong>3.000 imágenes</strong> procesadas por IA.</li>
               <li>Para coleccionistas grandes o vendedores fuertes.</li>
               <li>Soporte prioritario y ayuda para optimizar tu catálogo.</li>
             </ul>
           </div>
         </div>
 
-        <!-- Lanzamiento -->
-        <div class="mt-3 p-3 rounded-lg bg-emerald-900/40 border border-emerald-600/60">
-          <p class="font-semibold text-emerald-300 text-sm">
-            🚀 Lanzamiento para la comunidad de Magic Concepción
-          </p>
-          <p class="text-zinc-200 mt-1">
-            Los <span class="font-semibold">primeros 10 vendedores</span> tienen el plan completo
-            <span class="font-semibold">GRATIS por 3 meses</span>, hasta 500 imágenes procesadas con IA,
+        <div class="vendor-launch-note">
+          <p><strong>🚀 Lanzamiento para la comunidad de Magic Concepción</strong></p>
+          <p>
+            Los <strong>primeros 10 vendedores</strong> tienen el plan completo
+            <strong>GRATIS por 3 meses</strong>, hasta 500 imágenes procesadas con IA,
             mientras afinamos la plataforma con su feedback.
           </p>
         </div>
@@ -868,20 +1026,20 @@
 
       <!-- Call to action -->
       <section>
-        <h3 class="font-semibold mb-1 text-zinc-100">¿Te interesa publicar tus cartas con IA?</h3>
-        <p class="text-zinc-300">
-          Escríbeme por WhatsApp y armamos tu carpeta compartida para subir tus fotos en bloques.  
-          Tú subes las fotos, la inteligencia artificial se encarga del resto.
+        <h3>¿Te interesa publicar tus cartas con IA?</h3>
+        <p>
+          Escríbeme por WhatsApp y armamos tu carpeta compartida para subir las fotos de tus cartas
+          (<strong>una carta por foto</strong>). Tú subes las fotos, la inteligencia artificial se encarga del resto.
         </p>
-        <div class="mt-3 flex flex-wrap gap-2 items-center">
+        <div class="vendor-modal-actions">
           <a href="https://wa.me/56990590045?text=Hola%2C%20quiero%20publicar%20mis%20cartas%20en%20la%20vitrina%20de%20Magic%20Concepci%C3%B3n%20con%20IA.%20%C2%BFC%C3%B3mo%20parto%3F"
              target="_blank"
              rel="noopener"
-             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-900 font-semibold text-sm">
-            <span>Hablar por WhatsApp</span>
+             class="vendor-modal-primary">
+            Hablar por WhatsApp
           </a>
           <button type="button"
-                  class="text-xs text-zinc-400 hover:text-zinc-200"
+                  class="vendor-modal-secondary"
                   onclick="closeVendorInfoModal()">
             Más tarde, solo quiero seguir viendo cartas
           </button>
@@ -890,6 +1048,7 @@
     </div>
   </div>
 </div>
+
 
 <div class="page-shell">
     <header>
@@ -1006,7 +1165,7 @@
 
     <footer>
         <div class="footer-inner">
-            <span>Generado automáticamente desde inventario_cartas.csv.</span>
+            <span>Sitio e inventario Generado automáticamente con IA.</span>
             <span>La Comunidad del Magic &copy; 2025</span>
         </div>
     </footer>
@@ -1217,7 +1376,6 @@
 
             const txt = document.createElement("span");
             txt.textContent = "Hablar por WhatsApp";
-
             waBtn.appendChild(txt);
 
             footer.appendChild(waBtn);
